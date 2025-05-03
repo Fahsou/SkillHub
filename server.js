@@ -18,12 +18,14 @@ app.get('/', (req, res) =>{
 });
 
 //import des routes
+const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const skillRoutes = require('./routes/skills');
 const missionRoutes = require('./routes/missions');
 const applicationsRoutes = require('./routes/applications');
 
 //definir les routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/missions', missionRoutes);

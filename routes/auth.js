@@ -51,10 +51,11 @@ router.post('/login', async(req, res)=>{
     return res.status(404).json({error: 'Mot de passe incorrect'});
    }
 
-   res.json({message: 'Connexion reussie'})
+   res.json({message: 'Connexion reussie', user: {id:user.id_users, name: user.name, email: user.email }});
 
   } catch(err){
-    res.status(500).json({error: 'err.message'});
+    console.error('Erreur de connexion:', err)
+    res.status(500).json({error: err.message});
 
   }
 
