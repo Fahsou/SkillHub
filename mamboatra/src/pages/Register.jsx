@@ -3,9 +3,10 @@ import axios from 'axios';
 
 function Register(){
     const [formData, setFormData] = useState({
-        fullname: '',
+        name: '',
         email: '',
-        password: ''
+        password: '',
+        role:'client',
     });
 
     const handleChange = (e) =>{
@@ -31,9 +32,13 @@ function Register(){
         <div className="register-form">
             <h2>Inscritption</h2>
             <form onSubmit={handleSubmit} > 
-             <input type="text" name="fullname" placeholder="Nom complet" value={formData.fullname} onChange={handleChange} required />
+             <input type="text" name="name" placeholder="Nom complet" value={formData.fullname} onChange={handleChange} required />
              <input type="text" name="email" placeholder="email" value={formData.email} onChange={handleChange} required />
              <input type="password" name="password" placeholder="Mot de passe" value={formData.password} onChange={handleChange} required />
+             <select name="role" value={formData.role} onChange={handleChange}  required>
+                <option value="client"> Client </option>
+                <option value="freelance"> Freelance </option>
+             </select>
              <button type="submit"> S'inscrire </button>
             </form>
         </div>

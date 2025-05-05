@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 //inscription utilisateur
 router.post('/register', async(req,res)=>{
-    const {name, email, password} = req.body;
+    const {name, email, password, role} = req.body;
 
     if (!name || !email || !password || !role){
       res.status(400).json({error : "Tous les champs sont requis"});
@@ -16,8 +16,8 @@ router.post('/register', async(req,res)=>{
         const hashedPassword = await bcrypt.hash(password,10);
 
         const result = await db.query(
-            'INSERT INTO users(name, email, password) VALUES ($1, $2, $3) RETURNING*',
-            [name, email, password]
+            'INSERT INTO users(name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING*',
+            [name, email, hashedPassword, role ]
         );
         res.status(201).json({message: 'Utilisateur inscrit', user: result.rows[0]});
     }catch(err){
@@ -56,7 +56,12 @@ router.post('/login', async(req, res)=>{
     return res.status(404).json({error: 'Mot de passe incorrect'});
    }
 
-   res.json({message: 'Connexion reussie', user: {id:user.id_users, name: user.name, email: user.email }});
+   res.json({message: 'Connexion reussie', user:
+     {id:user.id_users, 
+      name: user.name, 
+      email: user.email ,
+      role: user.role
+    }});
 
   } catch(err){
     console.error('Erreur de connexion:', err)
