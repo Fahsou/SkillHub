@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// GET /users - Récupérer tous les utilisateurs dans la BDD
+// GET /users - Recuperer tous les utilisateurs dans la BDD
 
 router.get('/', async(req, res)=>{
     try{
@@ -30,27 +30,47 @@ router.get('/:id', async(req, res) =>{
     }
 });
 
-//ROUTE POST  creation nouvel utilisateur
-router.post('/', async(req, res)=>{
-  const {name, email, password, role} = req.body //extraction des donnees envoye dans le corps de la requete
+//Modifier un utilisateur PUT par id
+router.put('/:id', async(req, res)=>{
+    const {id} = req.params;
+    const {name, email}= req.body;
 
-  if (!name || !email || !password || !role){
-    res.status(400).json({error : "Tous les champs sont requis"});
-  }
+    try{
+        const result = await db.query(
+            'UPDATE users SET name =$1, email = $2 WHERE id_users = $3 RETURNING id_users, name, email',
+            [name, email, id]
+        );
+        if(result.rows.length === 0){
+            return res.status(404).json({error: 'Utilisateur introuvable'});
+        }
 
-  try{
-  const result = await db.query(
-   'INSERT INTO users (name, email, password, role ) VALUES ($1,  $2, $3, $4) RETURNING *',
-   [name, email, password, role]
-  );
-  res.status(201).json(result.rows[0]); // Renvoi l'user cree avec son id
+    }catch(err){
+        console.error('Erreur modification:', err)
+        res.status(500).json({error: 'Erreur serveur'});
 
-  } catch(err) {
-    console.error(err);
-    res.status(500).json({error: ' Erreur serveur'});
-
-  }
+    }
 
 });
+
+//Supprimer un utilisateur
+router.delete('/:id', async(req,res) =>{
+    const {id} = req.params;
+    try{
+        const result = await db.query(
+            'DELETE FROM users WHERE id_users = $1 RETURNING*', 
+            [id]
+        );
+
+        if(result.rows.length === 0){
+            return res.status(404).json({error: 'Utilisateur non trouve'})
+        }
+        res.json({message: 'utilisateur supprime'});
+
+    }catch(err){
+        console.error('erreur suppression', err)
+        res.status(500).json({error: 'erreur serveur'})
+    }
+});
+
 
 module.exports = router;

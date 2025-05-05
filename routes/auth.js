@@ -7,6 +7,11 @@ const bcrypt = require('bcrypt');
 router.post('/register', async(req,res)=>{
     const {name, email, password} = req.body;
 
+    if (!name || !email || !password || !role){
+      res.status(400).json({error : "Tous les champs sont requis"});
+    }
+  
+
     try{
         const hashedPassword = await bcrypt.hash(password,10);
 
