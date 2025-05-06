@@ -8,7 +8,7 @@ router.post('/register', async(req,res)=>{
     const {name, email, password, role} = req.body;
 
     if (!name || !email || !password || !role){
-      res.status(400).json({error : "Tous les champs sont requis"});
+     return  res.status(400).json({error : "Tous les champs sont requis"});
     }
   
 
@@ -30,12 +30,6 @@ router.post('/register', async(req,res)=>{
     
 
 });
-
-
-
-
-
-
 
 
 //connexion utilisateur
