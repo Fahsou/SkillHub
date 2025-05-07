@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 
 //inscription utilisateur
 router.post('/register', async(req,res)=>{
+
+    console.log('requete recu sur /api/auth/register');
     const {name, email, password, role} = req.body;
 
     if (!name || !email || !password || !role){

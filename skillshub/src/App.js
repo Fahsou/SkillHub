@@ -1,24 +1,27 @@
-import logo from './logo.svg';
+//import logo from './logo.svg';
+import React from 'react';
+import {BrowserRouter, Routes, Route, useLocation} from 'react-router-dom';
 import './App.css';
+import Register from './pages/Register';
+
+
+function LocationDisplay(){
+  const location = useLocation();
+  return <div style={{color: 'red', fontWeight: 'bold'}}> Chemin actuel : {location.pathname} </div>;
+}
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+     <LocationDisplay/>
+    <Routes>
+     <Route path="/test" element={<div> Page de test  </div>} > </Route>
+     <Route path="/register" element={<Register/>} > </Route>
+     {/* <Route path="*" element={<div>Page non trouve</div>}> </Route>*/}
+    </Routes>
+   </BrowserRouter>
+   
   );
 }
 
