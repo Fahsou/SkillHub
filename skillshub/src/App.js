@@ -3,6 +3,7 @@ import React from 'react';
 import {BrowserRouter, Routes, Route, useLocation} from 'react-router-dom';
 import './App.css';
 import Register from './pages/Register';
+import Login from './pages/Login';
 
 
 function LocationDisplay(){
@@ -18,6 +19,7 @@ function App() {
     <Routes>
      <Route path="/test" element={<div> Page de test  </div>} > </Route>
      <Route path="/register" element={<Register/>} > </Route>
+     <Route path="/login" element={<Login/>} > </Route>
      {/* <Route path="*" element={<div>Page non trouve</div>}> </Route>*/}
     </Routes>
    </BrowserRouter>

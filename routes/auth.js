@@ -36,6 +36,7 @@ router.post('/register', async(req,res)=>{
 
 //connexion utilisateur
 router.post('/login', async(req, res)=>{
+  console.log('requete recu sur /api/auth/login');
   const {email, password} = req.body;
 
   try{
