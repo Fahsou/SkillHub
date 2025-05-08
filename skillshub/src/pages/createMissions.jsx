@@ -32,9 +32,13 @@ export default function CreateMissions(){
         console.log('Mission cree avec success', reponse.data); //reponse de axios
         setSuccess('Mission cree avec success');  
 
-      } catch{
+      } catch(err){
+        console.error('Erreur lors de la creation de mission:', err)
+        setError('Echec de la creation de mission:'+(err.reponse?.data?.error || err.message));
 
-      } 
+      } finally{
+        setSubmitting(false);
+      }
 
 
     }
