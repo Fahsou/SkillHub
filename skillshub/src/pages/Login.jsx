@@ -21,9 +21,7 @@ import { useNavigate } from 'react-router-dom';
    try{
      const reponse  = await fetch('http://localhost:5000/api/auth/login', {
         method:'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({email, password}),
       });
 
@@ -34,8 +32,12 @@ import { useNavigate } from 'react-router-dom';
       
       const data = await reponse.json();
       console.log('Connexion reussie', data);
-      localStorage.setItem('user', JSON.stringify(data.user))
-      navigate('/dashboard');
+
+      localStorage.setItem('user', JSON.stringify({
+      ...data.user,
+       token: data.token,
+      }));
+      navigate('/profile');
     
     } catch(err){
     console.error('Erreur de connexion:', err)

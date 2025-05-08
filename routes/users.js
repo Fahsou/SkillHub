@@ -1,34 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const authMiddleware = require('../middleware/authe')
 
 // GET /users - Recuperer tous les utilisateurs dans la BDD
 
-router.get('/', async(req, res)=>{
+router.get('/profile', authMiddleware, async(req, res)=>{
     try{
-        const result = await db.query('SELECT id_users, name, email FROM users');
-        res.json(result.rows);
+        const userId = req.user.id;
+        const result = await db.query('SELECT id_users, name, email, role FROM users WHERE id_users=$1', [userId]);
+        res.json(result.rows[0]);
     } catch(err) {
         console.log('Erreur lors de la recuperation des utilisateurs', err);
         res.status(500).json({error: 'Erreur serveur'});
     }
 });
 
-// GET /users/:id - Recuperer un utilisateur par son ID
-router.get('/:id', async(req, res) =>{
-    const {id} = req.params;
-    try{
-        const result = await db.query('SELECT id_users, name, email FROM users WHERE id_users = $1, [id]');
-        if(result.rows.length ===0){
-            return res.status(404).json({error: 'Utilisateur non trouve'});
-        }
-        res.json(result.rows[0]); //envoi en json
-    }
-    catch (err){
-        console.error('Error: ', err);
-        res.status(500).json({error : 'Erreur serveur'});
-    }
-});
+
 
 //Modifier un utilisateur PUT par id
 router.put('/:id', async(req, res)=>{

@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 //inscription utilisateur
 router.post('/register', async(req,res)=>{
@@ -52,13 +54,27 @@ router.post('/login', async(req, res)=>{
    if(!isMatch){
     return res.status(404).json({error: 'Mot de passe incorrect'});
    }
-
-   res.json({message: 'Connexion reussie', user:
-     {id:user.id_users, 
+   
+   const token = jwt.sign(
+    {id: user.id_users, 
       name: user.name, 
       email: user.email ,
       role: user.role
-    }});
+    }, 
+    process.env.JWT_SECRET,
+    {expiresIn: '1h'}
+   );
+
+
+   res.json({message: 'Connexion reussie', 
+    token,
+    user:
+     {id: user.id_users, 
+      name: user.name, 
+      email: user.email ,
+      role: user.role,
+     }
+   });
 
   } catch(err){
     console.error('Erreur de connexion:', err)

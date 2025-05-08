@@ -7,17 +7,25 @@ export default function Profile(){
     useEffect(()=>{
     //recupere l'utilisateur depuis localstorage si stocke apres le login
 
-    const storedUser = localStorage.getItem('user');
-    if(storedUser){
-        setUser(JSON.parse(storedUser));
-    }
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const token = storedUser?.token;
+
+    fetch('http://localhost:5000/api/users/profile',
+        {
+            headers:{ Authorization: token,},
+        }
+    )
+
+    .then((res)=> res.json)
+    .then((data)=> setUser(data))
+    .catch((err)=>console.error('erreur chargement profil', err))
 
     if(!user){
-        return <p>Veuillez vous connecter</p>
+        return <p> Chargement...</p>
     }
 
 
-    } )
+    }, [] );
 
     return (
     <div>
