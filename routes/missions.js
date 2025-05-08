@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db');
 
 //ajout mission
-router.post('/', async(req, res)=>{
+router.post('/createMission', async(req, res)=>{
   const {title, description, client_id} = req.body; // extraction des donnees
 
   if( !title || !description || !client_id){
@@ -22,7 +22,7 @@ router.post('/', async(req, res)=>{
 });
 
 //recuperer tous
-router.get('/shoMissions', async(req, res)=>{
+router.get('/showMissions', async(req, res)=>{
     try{
         const result = await db.query('SELECT* FROM missions');
         res.json(result.rows);
