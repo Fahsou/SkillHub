@@ -3,8 +3,9 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 module.exports = function (req, res, next){
-    const token = req.headers['authorization'];
-    if(!token) return res.status(401).json({error: 'Access denied'});
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split('')[1];
+    if(!token) return res.status(401).json({error: 'Token manquant'});
 
     try{
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -12,7 +13,7 @@ module.exports = function (req, res, next){
     next();
 
     } catch{
-     res.status(401).json({error: 'Token invalide'});
+     res.status(403).json({error: 'Token invalide'});
 
     }
 };

@@ -6,10 +6,11 @@ const authMiddleware = require('../middleware/authe')
 // GET /users - Recuperer tous les utilisateurs dans la BDD
 
 router.get('/profile', authMiddleware, async(req, res)=>{
+    console.log('requete recu sur api/users/profile')
     try{
         const userId = req.user.id;
-        const result = await db.query('SELECT id_users, name, email, role FROM users WHERE id_users=$1', [userId]);
-        res.json(result.rows[0]);
+        const result = await db.query('SELECT id_users AS id, name, email, role FROM users WHERE id_users= $1', [userId]);
+        res.json({user: result.rows[0]});
     } catch(err) {
         console.log('Erreur lors de la recuperation des utilisateurs', err);
         res.status(500).json({error: 'Erreur serveur'});
