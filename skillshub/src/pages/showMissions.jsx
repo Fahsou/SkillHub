@@ -5,29 +5,29 @@ import axios from 'axios';
 //recuperation de tous les missions via get/api/missions/
 //gestion des etats
 
-export default function showMissions(){
+export default function ShowMissions(){
    const [missions, setMissions] = useState([]); //stoke liste des missions
-   const [loading, setLoading] = useState([]); //gestion affichage chargement
-   const [error, setError] = useState([]); // gestion des erreurs
+   const [loading, setLoading] = useState(true); //gestion affichage chargement
+   const [error, setError] = useState(null); // gestion des erreurs
 
    useEffect(()=>{
     
         const fetchMissions = async () =>{
             try{
                 const reponse = await axios.get('http://localhost:5000/api/missions/showMissions');
-                console.log('Liste des missions', reponse.data);
+                console.log('Reponse API', reponse); //reponse de axios
+                console.log('Liste des missions', reponse.data); //Liste mission
 
-                const data = await reponse.json();
-                setMissions(data);
+                setMissions(reponse.data); //axios met les donnees dans .data
                 
             } catch(err){
                 console.error('Erreur lors de la recuperation des missions:', err);
-                setError('Impossible de charger les missions');
+                setError('Impossible de charger les missions' + (err.reponse?.data?.error || err.message));
 
             } finally{
                 setLoading(false);
             }
-        }
+        };
         fetchMissions();
 
    }, []);

@@ -5,6 +5,7 @@ import './App.css';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import ShowMissions from './pages/ShowMissions';
 
 
 function LocationDisplay(){
@@ -22,6 +23,7 @@ function App() {
      <Route path="/register" element={<Register/>} > </Route>
      <Route path="/login" element={<Login/>} > </Route>
      <Route path="/profile" element={<Profile/>} > </Route>
+     <Route path="/showMissions" element={<ShowMissions/>}></Route>
      {/* <Route path="*" element={<div>Page non trouve</div>}> </Route>*/}
     </Routes>
    </BrowserRouter>
