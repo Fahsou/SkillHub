@@ -13,7 +13,7 @@ export default function CreateMissions(){
     //changement d'etat pour l'envoi, erreur, success
     const [submitting, setSubmitting] = useState(false);
     const [error, setError]= useState("");
-    const [success, setSuccess] = (null);
+    const [success, setSuccess] = ("");
     
     //gestion de changement dans le formulaire 
     const handleChange = (e) =>{
@@ -27,10 +27,7 @@ export default function CreateMissions(){
     const handleSubmit = async(e)=>{
       e.preventDefault(); //empeche le rechargment de la page
     //reinitialiser les messages
-      setError(null);
-      setSuccess(null);
-      setSubmitting(null);
-
+      
       const token = localStorage.getItem('token');
 
       if(!token){
@@ -56,7 +53,8 @@ export default function CreateMissions(){
             }
         );
         console.log('Mission cree avec success', reponse.data); //reponse de axios
-        setSuccess('Mission cree avec success');  
+        //setSuccess('Mission cree avec success');  
+        alert('Mission cree avec success');
 
       } catch(err){
         console.error('Erreur lors de la creation de mission:', err)
@@ -68,13 +66,6 @@ export default function CreateMissions(){
 
 
     }
-    
-    
-    
-    
-
-    
-    
     
     
     return(
