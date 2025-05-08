@@ -22,7 +22,7 @@ router.post('/', async(req, res)=>{
 });
 
 //recuperer tous
-router.get('/', async(req, res)=>{
+router.get('/shoMissions', async(req, res)=>{
     try{
         const result = await db.query('SELECT* FROM missions');
         res.json(result.rows);
