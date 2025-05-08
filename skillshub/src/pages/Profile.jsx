@@ -2,30 +2,64 @@ import React, {useState, useEffect} from 'react';
 
 export default function Profile(){
 
-    const [user, setUser] = useState(null);
+    const [ user, setUser] = useState(null);
+    const [ error, setError] = useState("");
     
     useEffect(()=>{
-    //recupere l'utilisateur depuis localstorage si stocke apres le login
+    
 
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    const token = storedUser?.token;
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    
+    if(!storedUser || !token){
+        setError("Veuillez vous connecter");
+        return;
+    }
 
-    fetch('http://localhost:5000/api/users/profile',
-        {
-            headers:{ Authorization: token,},
+
+    const fetchProfile = async () =>{
+        try{
+            const reponse = await fetch('http://localhost:5000/api/users/profile',{
+                method: 'GET',
+                headers:{
+                    'Content-type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!reponse.ok){
+                throw new Error('Erreur lors de la recuperation du profil');
+            }
+            
+            const data = await reponse.json();
+            setUser(data.user);
+
+
+        }catch(err){
+            console.error(err);
+            setError('Impossible de charger le profil');
         }
-    )
+    
+    
+    };
 
-    .then((res)=> res.json)
-    .then((data)=> setUser(data))
-    .catch((err)=>console.error('erreur chargement profil', err))
+    fetchProfile();
+    
 
-    if(!user){
+    if(!storedUser){
         return <p> Chargement...</p>
     }
 
 
     }, [] );
+
+    if(error){
+        return <h2>{error} </h2>
+    }
+
+    if(!user){
+        return <h2> Chargement de profil </h2>
+    }
 
     return (
     <div>

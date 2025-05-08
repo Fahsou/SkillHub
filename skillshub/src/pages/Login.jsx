@@ -37,6 +37,9 @@ import { useNavigate } from 'react-router-dom';
       ...data.user,
        token: data.token,
       }));
+      
+      localStorage.setItem('token', data.token);
+
       navigate('/profile');
     
     } catch(err){
