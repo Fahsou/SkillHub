@@ -34,6 +34,7 @@ import { useNavigate } from 'react-router-dom';
       
       const data = await reponse.json();
       console.log('Connexion reussie', data);
+      localStorage.setItem('user', JSON.stringify(data.user))
       navigate('/dashboard');
     
     } catch(err){
