@@ -7,7 +7,7 @@ export default function CreateMissions(){
     const [formData, setFormData] = useState({ //Etat de stockage de donnee
         title: '',
         description:'',
-        client_id: '',
+    
     });
 
     //changement d'etat pour l'envoi, erreur, success
@@ -26,9 +26,35 @@ export default function CreateMissions(){
     //soumission formulaire
     const handleSubmit = async(e)=>{
       e.preventDefault(); //empeche le rechargment de la page
-    //
+    //reinitialiser les messages
+      setError(null);
+      setSuccess(null);
+      setSubmitting(null);
+
+      const token = localStorage.getItem('token');
+
+      if(!token){
+        setError('Vous devez etre connecte pour creer une mission');
+        setSubmitting(false);
+        return;
+      }
+
+      //Donnee a envoye a l'API seulement title et description
+      const dataToSend = {
+        title: formData.title,
+        description: formData.description
+      };
+
       try{
-        const reponse = await axios.post('http://localhost:5000/api/missions/createMission')
+        const reponse = await axios.post('http://localhost:5000/api/missions/createMission', dataToSend,
+            { //config requete incluant header
+                headers:{
+                    'Content-Type': 'application/json', //dire au back que c'est du json
+                    'Authorization': `Bearer ${token}`
+                }
+
+            }
+        );
         console.log('Mission cree avec success', reponse.data); //reponse de axios
         setSuccess('Mission cree avec success');  
 
@@ -78,7 +104,10 @@ export default function CreateMissions(){
 
             </form>
 
-
+        {/*Affichage des messages d'erreur */}
+        {success && <p style={{color: 'green'}} >{success} </p>}
+        {error && <p style={{color: 'red'}} >{error} </p>}
+        
         </div>
     )
 }
