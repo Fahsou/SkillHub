@@ -44,11 +44,11 @@ export default function Clients(){
 
 return(
     <div className="clients-container">
-        <h2> Liste des freelancers </h2>
+        <h2> Liste des clients </h2>
         {clients.length>0? (
-            <div className="freelancers-list">
+            <div className="clients-list">
                 {clients.map(client =>(
-                    <div key={client.id_users} className="freelancers-item"> 
+                    <div key={client.id_users} className="clients-item"> 
                      <h3>{client.name} </h3>
                      <p>{client.email} </p>
 

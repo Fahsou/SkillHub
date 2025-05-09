@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import ShowMissions from './pages/ShowMissions';
 import CreateMissions from './pages/createMissions';
 import Freelancers from './pages/Freelancers';
+import Clients from './pages/Clients';
 
 function LocationDisplay(){
   const location = useLocation();
@@ -27,6 +28,7 @@ function App() {
      <Route path="/showMissions" element={<ShowMissions/>}></Route>
      <Route path="/createMission" element={<CreateMissions/>}></Route>
      <Route path="/freelancers" element={<Freelancers/>} ></Route>
+     <Route path="/clients" element={<Clients/>} ></Route>
 
      {/* <Route path="*" element={<div>Page non trouve</div>}> </Route>*/}
     </Routes>
