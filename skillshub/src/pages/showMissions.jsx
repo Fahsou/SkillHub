@@ -43,6 +43,27 @@ export default function ShowMissions(){
     return(
         <div className="mission-container">
             <h2>Liste des missions</h2>
+            {missions.length > 0 ? ( 
+               <div className="missions-list"> 
+                   {missions.map(mission => (
+                       <div key={mission.id_missions} className="mission-item">
+                           <h3>{mission.title}</h3>
+                           <p>{mission.description}</p>
+                           {mission.created_at && (
+                               <p>Créée le: {new Date(mission.created_at).toLocaleDateString()}</p>
+                           )}
+                       </div>
+                   ))}
+               </div>
+           ) : (
+               <p>Aucune mission trouvée pour le moment.</p>
+           )}
+           {/* --- Fin de la boucle --- */}
+
+        
+        
+        
+        
         </div>
     )
 }
