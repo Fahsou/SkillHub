@@ -3,19 +3,19 @@ const router = express.Router();
 const db = require('../db');
 const authMiddleware = require('../middleware/authe')
 
-//Un freelance postule a une mission 
+//Un freelance postule a une mission  avec un message
 router.post('/', authMiddleware ,async(req,res)=>{
   console.log('Requete recu sur POST api/application');
 
- const {mission_id} = req.body;
+ const {mission_id, message_content} = req.body;
  const freelance_id = req.user.id;
 
 
- if(!mission_id){
-    return res.status(400).json({error: 'Mission ID requis'});
+ if(!mission_id || message_content === undefined || message_content === null){
+    return res.status(400).json({error: 'Mission ID et contenu du message requis requis'});
  }
 
- if(!req.user.role !== 'freelance'){
+ if(req.user.role !== 'freelance'){
   return res.status(403).json({error:"Seul les utilisateurs avec role freelance peuvent postuler"});
  }
 
@@ -25,15 +25,15 @@ router.post('/', authMiddleware ,async(req,res)=>{
   [freelance_id, mission_id]
  );
 
- if(existingApplication.rows,this.length>0){
+ if(existingApplication.rows.length>0){
   return res.status(409).json({error: 'Vous avez deja postule a cette mission'});
  }
 
 
   //insertion dans la table application
   const result = await db.query(
-    'INSERT INTO applications( freelance_id, mission_id)  VALUES($1, $2 ) RETURNING*',
- [freelance_id, mission_id]
+    'INSERT INTO applications( freelance_id, mission_id, message_content)  VALUES($1, $2, $3 ) RETURNING*',
+ [freelance_id, mission_id, message_content]
 );
  console.log('Candidature enregistre:', result.rows[0]);
  res.status(201).json(result.rows[0]); //renvoi

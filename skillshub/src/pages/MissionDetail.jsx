@@ -63,7 +63,7 @@ export default function MissionDetails(){
  return(
     <div className="missionDetail-container">
         <h2> {mission.title} </h2>
-        <p> <strong>Description: </strong> {mission.descritpion} </p>
+        <p> <strong>Description: </strong> {mission.description} </p>
         {mission.created_at && (
             <p> <strong> Cree le: </strong> {new Date(mission.created_at).toLocaleDateString()} </p>
         ) }
