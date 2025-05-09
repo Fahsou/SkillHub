@@ -106,6 +106,9 @@ export default function ApplyForMissions(){
         }
     };
 
+    if(loading){
+        return <p>Chargement... </p>
+    }
    //verifie ID mission 
     if(!missionId){
         return <p style={{color: 'red'}} > Erreur : ID de mission manquant pour la candidature </p>
