@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const authMiddleware = require('../middleware/authe');
+
 //ajout mission
 router.post('/createMission', authMiddleware, async(req, res)=>{
   console.log('requete recu sur api/missions/createMission');

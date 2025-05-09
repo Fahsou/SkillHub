@@ -1,24 +1,45 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const authMiddleware = require('../middleware/authe')
 
-//postuler a une mission 
-router.post('/', async(req,res)=>{
- const { freelance_id, mission_id} = req.body;
+//Un freelance postule a une mission 
+router.post('/', authMiddleware ,async(req,res)=>{
+  console.log('Requete recu sur POST api/application');
 
- if(!freelance_id || !mission_id){
-    return res.status(400).json({error: 'Les champs freelance et missions sont requis'});
+ const {mission_id} = req.body;
+ const freelance_id = req.user.id;
+
+
+ if(!mission_id){
+    return res.status(400).json({error: 'Mission ID requis'});
+ }
+
+ if(!req.user.role !== 'freelance'){
+  return res.status(403).json({error:"Seul les utilisateurs avec role freelance peuvent postuler"});
  }
 
  try{
+ const existingApplication = await db.query(
+  'SELECT id_applications FROM applications WHERE freelance_id = $1 AND  mission_id = $2',
+  [freelance_id, mission_id]
+ );
+
+ if(existingApplication.rows,this.length>0){
+  return res.status(409).json({error: 'Vous avez deja postule a cette mission'});
+ }
+
+
+  //insertion dans la table application
   const result = await db.query(
     'INSERT INTO applications( freelance_id, mission_id)  VALUES($1, $2 ) RETURNING*',
  [freelance_id, mission_id]
 );
+ console.log('Candidature enregistre:', result.rows[0]);
  res.status(201).json(result.rows[0]); //renvoi
 
  } catch(err){
-    console.error(err);
+    console.error('Erreur lors de la creation de la candidature:', err);
    res.status(500).json({error: err.message});
  }
 });
