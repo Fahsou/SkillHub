@@ -4,7 +4,7 @@ const db = require('../db');
 const authMiddleware = require('../middleware/authe')
 
 // GET /users - Recuperer tous les utilisateurs dans la BDD
-
+//profil de la personne
 router.get('/profile', authMiddleware, async(req, res)=>{
     console.log('requete recu sur api/users/profile')
     try{
@@ -17,6 +17,36 @@ router.get('/profile', authMiddleware, async(req, res)=>{
     }
 });
 
+//route pour recuperer les utilisateurs par role GET api/user?role=freelance ou client
+router.get('/', async(req, res)=>{
+    console.log('Requete recu sur GET api/user?role=...');
+
+    const userRoleFilter = req.query.role; //recuperation de param de requete role
+
+    let query = 'SELECT id_users, name, email, role FROM users';
+    const queryParams = []; //pour mettre les parametres de requete SQL
+
+    //specification des roles avec la clause WHERE
+    if(userRoleFilter){
+        query += 'WHERE role =$1';
+        queryParams.push(userRoleFilter); //ajout la valeur du role comme param securisee
+        console.log(`Filtrage par role: ${userRoleFilter}`);
+    }
+    
+    //execution requete
+    try{
+        const result = await db.query(query, queryParams);
+        
+        res.json(result.rows); //renvoyer la liste des utilisateurs trouve filtre ou non
+
+    }catch(err) {
+        console.error('Erreur lors de la recuperation des utilisateurs:', err);
+        res.status(500).json({error: 'Erreur du serveur lors de la recuperation des utilisateurs'});
+
+    }
+
+
+});
 
 
 //Modifier un utilisateur PUT par id
