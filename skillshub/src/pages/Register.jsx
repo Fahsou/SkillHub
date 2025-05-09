@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import axios from 'axios';
 
 export default function Register(){
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState({ //stockage donnee
         name: '',
         email: '',
         password: '',
