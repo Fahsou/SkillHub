@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import axios from 'axios';
+import { Link } from "react-router-dom";
 
 
 //recuperation de tous les missions via get/api/missions/
@@ -52,12 +53,16 @@ export default function ShowMissions(){
                            {mission.created_at && (
                                <p>Créée le: {new Date(mission.created_at).toLocaleDateString()}</p>
                            )}
+                           <Link to={`/missions/${mission.id_missions}`}>Voir plus </Link>
                        </div>
+                       
                    ))}
                </div>
            ) : (
                <p>Aucune mission trouvée pour le moment.</p>
            )}
+
+          
            
         </div>
     )
