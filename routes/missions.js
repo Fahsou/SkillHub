@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db');
 const authMiddleware = require('../middleware/authe');
 
-//ajout mission
+//--------------------------ajouter une mission---------------------------------//
 router.post('/createMission', authMiddleware, async(req, res)=>{
   console.log('requete recu sur api/missions/createMission');
 
@@ -27,7 +27,7 @@ router.post('/createMission', authMiddleware, async(req, res)=>{
   }
 });
 
-//recuperer tous
+//------------------------recuperer toutes les missions-------------------------------//
 router.get('/showMissions', async(req, res)=>{
     try{
         const result = await db.query('SELECT* FROM missions');
@@ -37,7 +37,7 @@ router.get('/showMissions', async(req, res)=>{
     }
 })
 
-//recuperation de mission par id pour postuler a une mission specifique
+//-------------------recuperation de mission par id pour postuler a une mission specifique--------------------//
 router.get('/:id', async(req,res)=>{
   console.log('Requete recue sur GET /api/missions/:id');
 
