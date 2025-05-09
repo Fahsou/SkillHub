@@ -56,7 +56,22 @@ export default function MissionDetails(){
         return <p style={{color: 'red'}} > {error} </p>;
     }
 
+    if(!mission){
+        return <p> Aucune information de mission a afficher </p>
+    }
+
  return(
-    <></>
+    <div className="missionDetail-container">
+        <h2> {mission.title} </h2>
+        <p> <strong>Description: </strong> {mission.descritpion} </p>
+        {mission.created_at && (
+            <p> <strong> Cree le: </strong> {newDate(mission.created_at).toLocaleDateString()} </p>
+        ) }
+        {mission.client_id && (
+            <p><strong>ID Client:</strong> {mission.client_id}</p>
+        )}
+
+   <button>Postuler</button>
+    </div>
  )
 }
