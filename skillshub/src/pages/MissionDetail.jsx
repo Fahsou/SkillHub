@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from "react";
 import axios from 'axios';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function MissionDetails(){
 
     const {missionId} = useParams();  //missionId doit etre egale au route dans App.js
+    const navigate = useNavigate();
 
     //etat pour stocker les details de mission
     const [mission, setMission] = useState(null);
@@ -71,7 +72,7 @@ export default function MissionDetails(){
             <p><strong>ID Client:</strong> {mission.client_id}</p>
         )}
 
-   <button>Postuler</button>
+   <button onClick={()=>navigate(`/apply/${missionId}`) } >Postuler</button>
     </div>
  )
 }
