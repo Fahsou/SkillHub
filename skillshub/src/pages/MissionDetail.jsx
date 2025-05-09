@@ -65,7 +65,7 @@ export default function MissionDetails(){
         <h2> {mission.title} </h2>
         <p> <strong>Description: </strong> {mission.descritpion} </p>
         {mission.created_at && (
-            <p> <strong> Cree le: </strong> {newDate(mission.created_at).toLocaleDateString()} </p>
+            <p> <strong> Cree le: </strong> {new Date(mission.created_at).toLocaleDateString()} </p>
         ) }
         {mission.client_id && (
             <p><strong>ID Client:</strong> {mission.client_id}</p>
