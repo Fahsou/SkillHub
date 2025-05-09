@@ -11,7 +11,7 @@ export default function Freelancers(){
 
     const fetchFreelancers = async ()=>{
         try{
-            const reponse = await axios.get('http://localhost/5000/api/users',{
+            const reponse = await axios.get('http://localhost:5000/api/users',{
                 params: {
                     role: 'freelance' //ajoute le parametre role?=freelance a l'URL
                 }
@@ -24,7 +24,7 @@ export default function Freelancers(){
 
         }catch(err) {
             console.error('Erreur lors de la recuperation des freelancers:', err);
-            setError('Impossible de charger la liste des freelancers' + (err.reponse?.data?.error || err.message));
+            setError('Impossible de charger la liste des freelancers ' + (err.reponse?.data?.error || err.message));
         } finally{
             setLoading(false);
         }

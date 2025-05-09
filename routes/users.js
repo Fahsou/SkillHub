@@ -28,11 +28,14 @@ router.get('/', async(req, res)=>{
 
     //specification des roles avec la clause WHERE
     if(userRoleFilter){
-        query += 'WHERE role =$1';
+        query += ' WHERE role = $1';
         queryParams.push(userRoleFilter); //ajout la valeur du role comme param securisee
         console.log(`Filtrage par role: ${userRoleFilter}`);
     }
-    
+     
+    console.log('Requete SQL finale construite: ', query);
+    console.log('Parametre de la requete SQL: ', queryParams);
+
     //execution requete
     try{
         const result = await db.query(query, queryParams);
