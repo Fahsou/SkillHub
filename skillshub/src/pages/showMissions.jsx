@@ -58,12 +58,7 @@ export default function ShowMissions(){
            ) : (
                <p>Aucune mission trouvée pour le moment.</p>
            )}
-           {/* --- Fin de la boucle --- */}
-
-        
-        
-        
-        
+           
         </div>
     )
 }

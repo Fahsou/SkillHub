@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+//import { useNavigate } from 'react-router-dom';
 
 //components 
 
@@ -13,7 +14,9 @@ export default function CreateMissions(){
     //changement d'etat pour l'envoi, erreur, success
     const [submitting, setSubmitting] = useState(false);
     const [error, setError]= useState("");
-    const [success, setSuccess] = ("");
+    const [success, setSuccess] = useState (null);
+    
+   // const navigate = useNavigate();
     
     //gestion de changement dans le formulaire 
     const handleChange = (e) =>{
@@ -27,6 +30,7 @@ export default function CreateMissions(){
     const handleSubmit = async(e)=>{
       e.preventDefault(); //empeche le rechargment de la page
     //reinitialiser les messages
+    
       
       const token = localStorage.getItem('token');
 
@@ -53,8 +57,10 @@ export default function CreateMissions(){
             }
         );
         console.log('Mission cree avec success', reponse.data); //reponse de axios
-        //setSuccess('Mission cree avec success');  
-        alert('Mission cree avec success');
+        setSuccess('Mission cree avec success');
+        setFormData({title:'', description:''});  
+       // navigate('/showMissions');
+       
 
       } catch(err){
         console.error('Erreur lors de la creation de mission:', err)
