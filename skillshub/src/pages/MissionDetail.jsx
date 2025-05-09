@@ -45,7 +45,7 @@ export default function MissionDetails(){
             setLoading(false);
         }
 
-    }, [missionId]); //re execute si l'URL change
+    }, [missionId]); //re execute si l'ID  de l'URL change
 
     // ---Logique de rendu conditionnel------
     if(loading){

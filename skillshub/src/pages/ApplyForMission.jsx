@@ -17,16 +17,30 @@ export default function ApplyForMissions(){
     const [error, setError] = useState(null);
 
     //Je veux afficher le titre du poste
-    const [missionDetail, setMissionDetail]= useState(null);
+    const [missionDetails, setMissionDetails]= useState(null);
+    const [loading, setLoading] = useState(true);
 
     //gestion des missions a afficher 
     useEffect( () =>{
        const fetchMissionsDetails = async() =>{
 
-        const reponse = await axios.get('http://localhost:5000/')
-       }
+        try{
+        const reponse = await axios.get(`http://localhost:5000/api/missions/${missionId}`)
+        setMissionDetails(reponse.data);
+       
+        }catch(err) {
+            console.error('Erreur chargement détails mission sur page candidature', err);
+            setError('Impossible d\'afficher les détails de la mission');
 
-    })
+        }finally{
+            setLoading(false);
+        }
+
+       };
+
+       if(missionDetails) fetchMissionsDetails();
+
+    }, [missionId]); //re execute si l'ID de l'URL change
 
    //gestion changement de message
    const handleMessageChange = (e) =>{
@@ -101,6 +115,35 @@ export default function ApplyForMissions(){
     return(
         <div className="apply-form-container">
          {missionDetails && <h2> Postuler a: {missionDetails.title}  </h2>}
+
+         <form onSubmit={handleSubmit}>
+            <div>
+                <label htmlFor="messageContent" > Votre message: </label>
+                <textarea id="messageContent"
+                 value ={messageContent}
+                 onChange={handleMessageChange}
+                 />
+             </div>
+
+             <div>
+                <label htmlFor="cvFile" > Uploader votre CV (format PDF, DOCX, DOC) </label>
+                <input
+                 type="file"
+                 id="cvFile"
+                 onChange={handleFileChange}
+                />
+                {cvFile && <p> Fichier selectionne: {cvFile.name} </p>}
+
+             </div>
+             <button type="submit" disabled={submitting} > </button>
+             {submitting?'Envoi en cours ': 'Soumettre la candidature '};
+            
+         </form>
+
+         {/*-------Affichage de message d'erreur */}
+         {success && <p style={{ color: 'green' }}>{success}</p>}
+         {error && <p style={{ color: 'red' }}>{error}</p>}
+
 
         </div>
     )
