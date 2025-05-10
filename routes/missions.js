@@ -123,4 +123,30 @@ router.get('/mission-has-application', authMiddleware, async(req,res)=>{
   }
   });
 
+  //-----------------------DASHBOARD nombre mission accepte par le client-------------------//
+  router.get('/count/accepted-by-client', authMiddleware, async(req,res)=>{
+    console.log('Requete recue sur GET /api/missions/count/accepted-by-client');
+
+    if(req.user.role !== 'client' ){
+      return res.status(403).json({error: 'Accès refusé. Seuls les clients peuvent voir ce compte'});
+    }
+
+    const clientId = req.user.id;
+    try{
+    // Requête SQL pour compter les missions du client où le statut est 'in_progress'
+    const result = await db.query("SELECT COUNT(*) FROM missions WHERE client_id = $1 AND status ='in_progress' ",
+      [clientId]
+    );
+    // COUNT(*) renvoie une chaîne, la convertir en nombre
+    const acceptedCount = parseInt(result.rows[0].count, 10);
+    res.json({count: acceptedCount}); //renvoyer le compte
+
+  }catch (err) {
+     console.error('Erreur lors du comptage des missions acceptées par client:', err);
+     res.status(500).json({ error:'Erreur serveur lors du comptage des missions acceptées.'});
+
+    }
+
+  });
+
 module.exports = router;
