@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db');
 const authMiddleware = require('../middleware/authe')
 
-//Un freelance postule a une mission  avec un message
+//--------------------Un freelance postule a une mission  avec un message authentifie--------------------//
 router.post('/', authMiddleware ,async(req,res)=>{
   console.log('Requete recu sur POST api/application');
 
@@ -44,16 +44,49 @@ router.post('/', authMiddleware ,async(req,res)=>{
  }
 });
 
-//voir toutes les candidatures
+//--------------------voir toutes les candidatures-------------------------//
 router.get('/', async(req, res) =>{
     try{
   const result = await db.query(
-    `SELECT a.id_applications`
+    `SELECT a.id_applications
+     FROM applications AS a
+    
+    `
   )
 
     }catch(err){
 
     }
-})
+});
+
+//-----------DASHBOARD GET nombre de candidature soumise par un freelancer connecté-----------------//
+//Compte le nombre total de candidatures soumises par le freelancer connecté
+
+router.get('/count/by-freelancer', authMiddleware, async(req, res)=>{
+ 
+  console.log('Requete recue sur GET /api/applications/count/by-freelancer');
+
+  if(req.user.role !== 'freelance'){
+    return res.status(403).json({error: 'Vous devez etre freelancer'});
+  }
+
+  const freelanceId = req.user.id;
+
+  try{
+     const result = await db.query('SELECT COUNT (*) FROM applications WHERE freelance_id = $1 ', [freelanceId]);
+     const appliedCount = parseInt(result.rows[0].count, 15);
+     res.json({count: appliedCount});
+
+  } catch (err) {
+    console.error('Erreur lors du comptage des candidatures par freelancer', err);
+    res.status(500).json({error: 'Erreur serveur lors du comptage des candidatures.' });
+
+  }
+
+
+
+
+
+});
 
 module.exports = router;

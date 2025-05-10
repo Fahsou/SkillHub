@@ -59,7 +59,7 @@ router.get('/:id', async(req,res)=>{
 
 } );
 
-//--------------------DASHBOARD GET /api/missions/count/published-by-client--------------------//
+//--------------------DASHBOARD GET nombre de mission publie par un client--------------------//
 //Compte le nombre total de mission publie par un client connecte
 router.get('/count/published-by-client', authMiddleware, async(req,res)=>{
   console.log('Requete recue sur GET /api/missions/count/published-by-client');
