@@ -44,18 +44,72 @@ router.post('/', authMiddleware ,async(req,res)=>{
  }
 });
 
-//--------------------voir toutes les candidatures-------------------------//
-router.get('/', async(req, res) =>{
+//--------------------voir toutes les candidatures filtre-------------------------//
+router.get('/', authMiddleware, async(req, res) =>{
+  console.log('Requete recu sur GET /api/applications');
+
+  const userId = req.user.id;
+  const userRole = req.user.role; //role de l'user conncete
+
     try{
-  const result = await db.query(
-    `SELECT a.id_applications
+      //role freelance
+      if(userRole === 'freelance'){
+        // Joindre applications et missions pour obtenir les titres
+       // Filtrer par l'ID du freelancer connecté
+
+     const result = await db.query(
+    `SELECT 
+     a.id_applications,
+     a.mission_id,
+     a.message_content, 
+     a.status AS application_status, -- Statut de la candidature
+     a.applied_at AS application_date, -- Date de candidature
+     m.title AS mission_title, -- Titre de la mission
+     m.description AS mission_description, 
+     m.status AS mission_status --status de la mission
      FROM applications AS a
-    
-    `
-  )
+
+     JOIN missions AS m ON a.mission_id = m.id_missions -- Jointure pour lier candidature et mission
+     WHERE a.freelance_id = $1 --Filtrer par l'ID du freelancer connecté
+     ORDER BY a.applied_at DESC --Filtre par date de candidature
+     `,
+     [userId]
+    );
+    res.json(result.rowa); //Renvoyer la liste des candidatures du freelancer
+
+   }
+   // Si l'utilisateur est un client
+    else if (userRole === 'client'){
+      // Si l'utilisateur est un client, il voudra voir les candidatures soumises à SES missions.
+      const result = await db.query(
+        `SELECT
+         a.id_applications,
+         a.freelance_id,
+         a.message_content,
+         a.status AS application_status,
+         a.applied_at AS application_date,
+         m.title AS  mission_title,
+         m.description AS mission_description,
+         m.status AS mission_status,
+         u.name AS freelancer_name 
+        FROM applications AS a
+        JOIN missions AS m ON a.mission_id = m.id_missions
+        LEFT JOIN users AS u ON a.freelance_id = u.id_users ---- Joindre users pour le nom du freelancer
+        WHERE m.client_id = $1 ---Filtre ID  client
+        ORDER BY a.applied_at DESC; `,
+        [userId]
+      );
+      res.json(result.rows); //
+
+    }
+
+    else{
+      res.status(403).json({error: 'Rôle non autorisé à voir les candidatures'})
+    }
 
     }catch(err){
-
+     console.error('Erreur lors de la récupération des candidatures:', err);
+     res.status(500).json({error: err.message});
     }
 });
 
