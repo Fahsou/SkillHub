@@ -17,7 +17,7 @@ export default function ClientDashboard({user, token} ){
 
       if(!user || !token ){
         setError('Informations utilisateur manquantes pour charger le tableau de bord client');
-        setLoading(true);
+        setLoading(false);
         return;
       }
 
@@ -52,7 +52,7 @@ export default function ClientDashboard({user, token} ){
         } catch (err) {
             console.error('Erreur lors du chargement des métriques client:', err);
             setError('Impossible de charger les données du tableau de bord client : ' + 
-                (err.reponse?.data?.error || err.message)); 
+                (err.response?.data?.error || err.message)); 
 
       }finally{
         setLoading(false);
@@ -74,16 +74,16 @@ export default function ClientDashboard({user, token} ){
   }
 
   
-
+   if(clientStat && missionWithCount ){
     return(
         <div className="client-dash-container">
             <h3> Tableau de bord: </h3>
 
-            <p> Nombre de missions publié:
-                {clientStat.publishedCount !== undefined? clientStat.publishedCount  : 'N/A' }
+            <p> Nombre de missions publié: 
+                {clientStat?.publishedCount !== undefined? clientStat.publishedCount  : 'N/A' }
              </p>
-            <p> Nombre de missions acceptées:
-                {clientStat.acceptedCount !== undefined? clientStat.acceptedCount  : 'N/A' }
+            <p> Nombre de missions acceptées: 
+                {clientStat?.acceptedCount !== undefined? clientStat.acceptedCount  : 'N/A' }
              </p> {/* Depend de la colonne status de la mission DB */}
 
              <h4> Candidature par mission: </h4>
@@ -93,7 +93,7 @@ export default function ClientDashboard({user, token} ){
                     {missionWithCount.map( mission =>{
                         <li key={mission.id_missions} >
                         Mission "{mission.title}": {mission.application_count} {parseInt(mission.application_count,
-                            10 > 1? 'candidatures' : 'candidature' )}
+                            10) > 1? 'candidatures' : 'candidature' }
                             {/* Lien vers mission */}
                         </li>
                     } )}
@@ -108,4 +108,6 @@ export default function ClientDashboard({user, token} ){
 
         </div>
     );
+  }
+  return <p> Preparation du Tableau </p>
 }

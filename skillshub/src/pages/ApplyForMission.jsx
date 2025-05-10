@@ -9,7 +9,7 @@ export default function ApplyForMissions(){
 
     //etat pour les donnees de formulaire
     const [messageContent, setMessageContent] = useState('');
-    const [cvFile, setCvFile] = useState(null);
+   // const [cvFile, setCvFile] = useState(null);
 
     //gestion: envoi, succes, erreur
     const [submitting, setSubmitting] = useState(false);
@@ -23,14 +23,24 @@ export default function ApplyForMissions(){
     //gestion des missions a afficher 
     useEffect( () =>{
        const fetchMissionsDetails = async() =>{
+        setLoading(true);
+        setError(null);
+
+       /* if(!missionId){
+            setError('Erreur ID mission manquant pour la candidature');
+            setLoading(false);
+        }*/
 
         try{
-        const reponse = await axios.get(`http://localhost:5000/api/missions/${missionId}`)
+        const reponse = await axios.get(`http://localhost:5000/api/missions/${missionId}`);
+        
         setMissionDetails(reponse.data);
        
         }catch(err) {
             console.error('Erreur chargement détails mission sur page candidature', err);
-            setError('Impossible d\'afficher les détails de la mission');
+            setError('Impossible d\'afficher les détails de la mission: ' + 
+                (err.reponse?.data?.error || err.message)
+            );
 
         }finally{
             setLoading(false);
@@ -38,7 +48,7 @@ export default function ApplyForMissions(){
 
        };
 
-       if(missionDetails) fetchMissionsDetails();
+       if(missionId)  fetchMissionsDetails();
 
     }, [missionId]); //re execute si l'ID de l'URL change
 
@@ -48,9 +58,9 @@ export default function ApplyForMissions(){
    }
 
    //gestion selection de fichier CV
-   const handleFileChange = (e) =>{
+ /*  const handleFileChange = (e) =>{
       setCvFile(e.target.files? e.target.files[0]: null );
-   }
+   }*/
 
    //gestion soumission de formulaire complet
    const handleSubmit = async (e)=>{
@@ -82,7 +92,7 @@ export default function ApplyForMissions(){
             //----------Le backend sécurisé s'attend à recevoir mission_id et message_content en JSON---------//
             const reponse = await axios.post('http://localhost:5000/api/applications', applicationData,
                 {
-                    header:{
+                    headers:{
                         'Content-Type': 'application/json', //indique qu'on envoi du json
                         'Authorization': `Bearer ${token}`
                     }
@@ -93,13 +103,13 @@ export default function ApplyForMissions(){
             setSuccess('Votre candidature est envoyee avec success');
             //reinitialiser le formulaire
             setMessageContent('');
-            setCvFile(null);
+           // setCvFile(null);
             navigate('/profile');
 
 
         }catch (err){
             console.error('Erreur lors de la soumission de candidature', err);
-            setError('Echec de la soumission de candidature: ', + err.reponse?.data?.error || err.message);
+            setError('Echec de la soumission de candidature: ', + err.response?.data?.error || err.message);
 
         }finally{
             setSubmitting(false);
@@ -110,8 +120,12 @@ export default function ApplyForMissions(){
         return <p>Chargement... </p>
     }
    //verifie ID mission 
-    if(!missionId){
+    if(error){
         return <p style={{color: 'red'}} > Erreur : ID de mission manquant pour la candidature </p>
+   }
+    
+   if(!missionDetails && !loading && !error){
+    return <p style={{color: 'red'}} > Erreur: impossible de charger les details de la mission </p>
    }
 
 
@@ -128,7 +142,7 @@ export default function ApplyForMissions(){
                  />
              </div>
 
-             <div>
+         {/*    <div>
                 <label htmlFor="cvFile" > Uploader votre CV (format PDF, DOCX, DOC) </label>
                 <input
                  type="file"
@@ -137,9 +151,10 @@ export default function ApplyForMissions(){
                 />
                 {cvFile && <p> Fichier selectionne: {cvFile.name} </p>}
 
-             </div>
-             <button type="submit" disabled={submitting} > </button>
-             {submitting?'Envoi en cours ': 'Soumettre la candidature '};
+             </div>*/}
+             <button type="submit" disabled={submitting} > 
+             {submitting? 'Envoi en cours ': 'Soumettre la candidature '}
+             </button>
             
          </form>
 

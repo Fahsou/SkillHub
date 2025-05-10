@@ -37,7 +37,7 @@ export default function Dashboard(){
     try{
         const reponse = await axios.get('http://localhost:5000/api/users/profile', 
             {
-                headers: {'Authorization': `Bearer ${token}` } // Envoie le token dans l'en-tête d'autorisation
+                headers: {'Authorization': `Bearer ${storedToken}` } // Envoie le token dans l'en-tête d'autorisation
             }
         );
         console.log('Profil utilisateur chargé avec succès:', reponse.data);
@@ -77,7 +77,7 @@ export default function Dashboard(){
         
         {/* --- Rendu Conditionnel du Tableau de Bord Spécifique au Rôle --- */}
         {user.role === 'client' && <ClientDashboard user={user} token={token} />}
-        {user.role === 'client' && <FreelancerDashboard user={user} token={token} />}
+        {user.role === 'freelance' && <FreelancerDashboard user={user} token={token} />}
 
         {!['client', 'freelance'].includes(user.role) && (
                      <p>Votre rôle utilisateur ({user.role}) n'est pas configuré pour un tableau de bord spécifique pour l'instant.</p>
