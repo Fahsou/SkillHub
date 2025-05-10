@@ -35,7 +35,7 @@ router.get('/showMissions', async(req, res)=>{
     }catch(err){
         res.status(500).json({error: err.message});
     }
-})
+});
 
 //-------------------recuperation de mission par id pour postuler a une mission specifique--------------------//
 router.get('/:id', async(req,res)=>{
@@ -57,6 +57,70 @@ router.get('/:id', async(req,res)=>{
 
   }
 
-} )
+} );
+
+//--------------------DASHBOARD GET /api/missions/count/published-by-client--------------------//
+//Compte le nombre total de mission publie par un client connecte
+router.get('/count/published-by-client', authMiddleware, async(req,res)=>{
+  console.log('Requete recue sur GET /api/missions/count/published-by-client');
+  
+  if(req.user.role !== 'client' ){
+    return res.status(403).json({error: 'Acces refuse seul les clients peuvent voir'});
+  }
+  
+  const clientId = req.user.id;
+
+  try{
+    const result = await db.query('SELECT COUNT(*) FROM missions WHERE client_id = $1', [clientId] );
+    const publishedCount = parseInt(result.rows[0].count, 10);
+    res.json({count: publishedCount});
+
+  } catch(err){
+    console.error('Erreur lors du comptage des missions publiées par client:', err);
+    res.status(500).json({ error: 'Erreur serveur lors du comptage des missions.' });
+
+  }
+
+});
+
+// ------------ROUTE DASHBOARD: GET /api/missions/with-application-counts-by-client ------------------------//
+// Liste les missions d'un client avec le nombre de candidatures pour chaque mission
+// Nécessite la table 'applications' existante
+router.get('/mission-has-application', authMiddleware, async(req,res)=>{
+  console.log('Requete recue sur GET /api/missions/mission-has-application');
+  if(req.user.role !== 'client' ){
+    return res.status(403).json({error: 'Acces refuse seul les clients peuvent voir'});
+  }
+
+  const clientId = req.user.id;
+
+  try{
+        const query = 
+        `SELECT
+         m.id_missions,
+         m.title,
+         m.description,
+         m.created_at,
+         m.status,  
+         COUNT(a.id_applications) AS application_count
+         FROM missions AS m
+         LEFT JOIN applications AS a ON m.id_missions = a.mission_id
+         WHERE m.client_id = $1
+          -- Grouper par toutes les colonnes non agrégées
+         GROUP BY m.id_missions, m.title, m.description, m.created_at, m.status
+         ORDER BY  m.created_at DESC;
+         `;
+
+         const result = await db.query(query, [clientId]);
+         res.json(result.rows);
+
+
+  }catch(err){ 
+    console.error('Erreur lors de la récupération des missions avec compte candidatures par client:', err);
+    res.status().json({ error: 'Erreur serveur lors de la récupération des données.' });
+
+
+  }
+  });
 
 module.exports = router;
