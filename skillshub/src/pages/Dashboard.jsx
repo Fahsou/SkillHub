@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 // --- Importez les composants spécifiques aux rôles ---//
 import ClientDashboard from './ClientDashboard';
 import FreelancerDashboard from './FreelancerDashboard';
 
 export default function Dashboard(){
+
+ const navigate = useNavigate();
 // État pour stocker les informations de l'utilisateur connecté
  const [user, setUser] = useState(null);
  const [token, setToken] = useState(null); //utile pour le passer aux composants enfants pour leurs appels API
+
+
 
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState(null);
@@ -22,6 +28,7 @@ export default function Dashboard(){
     if(!storedToken){
         setError('Vous devez être connecté pour accéder au tableau de bord');
         setLoading(false);
+        navigate('/login');
         return; //stop cette execution
     }
 
@@ -52,7 +59,7 @@ export default function Dashboard(){
 
   fetchUserProfil();
  
-}, [token]);
+  }, []);
 
    if(error){
     return <p style={{color: 'red'}} > {error}  </p>

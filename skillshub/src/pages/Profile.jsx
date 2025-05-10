@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
 
 export default function Profile(){
 
@@ -67,6 +68,11 @@ export default function Profile(){
         <p><strong>Nom:</strong> {user.name} </p>
         <p><strong>Email:</strong> {user.email} </p>
         <p><strong>Role:</strong> {user.role} </p>
+
+        <Link to="/dashboard" >
+         <button> Voir mon tableau de bord </button>
+        </Link>
+
     </div>
     )
 }

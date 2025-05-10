@@ -83,10 +83,10 @@ router.get('/count/published-by-client', authMiddleware, async(req,res)=>{
 
 });
 
-// ------------ROUTE DASHBOARD: GET /api/missions/with-application-counts-by-client ------------------------//
-// Liste les missions d'un client avec le nombre de candidatures pour chaque mission
+// ------------ROUTE DASHBOARD: GET mission avec nombre de candidature vue par le client ------------------------//
+// Liste les missions d'un client avec le nombre de candidatures pour chaque mission 
 // Nécessite la table 'applications' existante
-router.get('/mission-has-application', authMiddleware, async(req,res)=>{
+router.get('/count/mission-has-application', authMiddleware, async(req,res)=>{
   console.log('Requete recue sur GET /api/missions/mission-has-application');
   if(req.user.role !== 'client' ){
     return res.status(403).json({error: 'Acces refuse seul les clients peuvent voir'});
@@ -123,7 +123,7 @@ router.get('/mission-has-application', authMiddleware, async(req,res)=>{
   }
   });
 
-  //-----------------------DASHBOARD nombre mission accepte par le client-------------------//
+  //-----------------------DASHBOARD nombre mission accepte par le client  NOMBRE-------------------//
   router.get('/count/accepted-by-client', authMiddleware, async(req,res)=>{
     console.log('Requete recue sur GET /api/missions/count/accepted-by-client');
 
