@@ -58,8 +58,10 @@ export default function ClientDashboard({user, token} ){
         setLoading(false);
       }
 
-      fetchClientsMetrics();
+     
     }
+
+    fetchClientsMetrics();
    
   }, [user, token]);
 

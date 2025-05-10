@@ -11,6 +11,7 @@ import Freelancers from './pages/Freelancers';
 import Clients from './pages/Clients';
 import MissionDetails from './pages/MissionDetail';
 import ApplyForMissions from './pages/ApplyForMission';
+import Dashboard from './pages/Dashboard';
 
 function LocationDisplay(){
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
      <Route path="/clients" element={<Clients/>} ></Route>
      <Route path="/missions/:missionId" element={<MissionDetails/>} ></Route>
      <Route path="/apply/:missionId" element={<ApplyForMissions/>} ></Route>
+     <Route path="/dashboard" element={<Dashboard/>}></Route>
 
 
      {/* <Route path="*" element={<div>Page non trouve</div>}> </Route>*/}

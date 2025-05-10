@@ -52,7 +52,7 @@ export default function Dashboard(){
 
   fetchUserProfil();
  
-}, []);
+}, [token]);
 
    if(error){
     return <p style={{color: 'red'}} > {error}  </p>
