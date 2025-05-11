@@ -88,9 +88,9 @@ if(!freelanceStat && !missionApplied){
                     {missionApplied.map(application =>{
                         return(
                             <li key={application.id_applications}>
-                                {application.mission_title}{' '}
-                                Statut de ma candidature: {' '} {application.application_status}
-                                Date d'application: {' '} {new Date(application.application_date).toLocaleDateString()}
+                                {application.mission_title}{'   '}:
+                                Statut: {'   '} "{application.application_status}" {'   '}
+                                Date d'application: {'   '} {new Date(application.application_date).toLocaleDateString()}
                             </li>
                         );
                     })}
