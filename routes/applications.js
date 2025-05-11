@@ -137,10 +137,45 @@ router.get('/count/by-freelancer', authMiddleware, async(req, res)=>{
 
   }
 
+});
 
+//----------------DASHBOARD  liste des candidatures qu'un freelance a postule---------------------------//
+router.get('/by-freelancer', authMiddleware, async (req, res)=>{
+  console.log('Requête reçue sur GET /api/applications/by-freelancer');
 
+  try{
+    // L'ID du freelancer est disponible via req.user.id grâce à authMiddleware
+    const freelanceId = req.user.id;
 
+    // Sélectionne les champs pertinents des deux tables
+    const result = await db.query(
+      `SELECT
+       app.id_applications,
+       app.mission_id,
+       app.message_content,
+       app.status AS  application_status,
+       app.applied_at AS application_date,
+       m.title AS mission_title,
+       m.status AS mission_status,
+       m.client_id 
+      FROM applications AS app
+      JOIN missions AS m ON app.mission_id = m.id_missions 
+      WHERE app.freelance_id = $1
+      ORDER BY app.applied_at DESC;
+      `,
+      [freelanceId]
+    );
+
+    console.log(`Found ${result.rows.length} application for freelance  ID ${freelanceId}`);
+    res.json(result.rows);
+
+   }catch(err){
+    console.error('Erreur lors de la récupération des candidatures du freelancer:', err);
+    res.status(500).json({error: 'Erreur serveur lors de la récupération des candid candidatures' });
+
+  }
 
 });
+
 
 module.exports = router;
