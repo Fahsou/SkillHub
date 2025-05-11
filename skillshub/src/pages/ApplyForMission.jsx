@@ -94,7 +94,7 @@ export default function ApplyForMissions(){
         try{
              //---------------Appel API pour envoyer la candidature--------------//
             //----------Le backend sécurisé s'attend à recevoir mission_id et message_content en JSON---------//
-            const reponse = await axios.post('http://localhost:5000/api/applications', applicationData,
+            const reponse = await axios.post('http://localhost:5000/api/applications/apply', applicationData,
                 {
                     headers:{
                         'Content-Type': 'application/json', //indique qu'on envoi du json

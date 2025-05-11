@@ -4,8 +4,8 @@ const db = require('../db');
 const authMiddleware = require('../middleware/authe')
 
 //--------------------Un freelance postule a une mission  avec un message authentifie--------------------//
-router.post('/', authMiddleware ,async(req,res)=>{
-  console.log('Requete recu sur POST api/application');
+router.post('/apply', authMiddleware ,async(req,res)=>{
+  console.log('Requete recu sur POST api/applications/apply');
 
  const {mission_id, message_content} = req.body;
  const freelance_id = req.user.id;
@@ -45,7 +45,7 @@ router.post('/', authMiddleware ,async(req,res)=>{
 });
 
 //--------------------voir toutes les candidatures filtre-------------------------//
-router.get('/', authMiddleware, async(req, res) =>{
+router.get('/view-applied', authMiddleware, async(req, res) =>{
   console.log('Requete recu sur GET /api/applications');
 
   const userId = req.user.id;
