@@ -27,7 +27,7 @@ export default function FreelancerDashboard({user, token} ){ //user et token en 
             //nombre de missions postule
             const appliedCountResponse = await axios.get('http://localhost:5000/api/applications/count/by-freelancer',
                 {
-                    header:{
+                    headers:{
                         'Authorization': `Bearer ${token}`
                     }
                 });
@@ -38,7 +38,7 @@ export default function FreelancerDashboard({user, token} ){ //user et token en 
         }catch(err){
             console.error('Erreur lors du chargement des métriques freelancer:', err);
             setError('Impossible de charger les données du tableau de bord freelancer : ' 
-                +(err.reponse?.data?.error || err.message ));
+                +(err.response?.data?.error || err.message ));
 
         }finally{
             setLoading(false);
@@ -62,9 +62,9 @@ if(!freelanceStat){
 
     return(
         <div className="freelancer-dashboard">
-            <h3> Tableau de bord jeune diplomee </h3>
-            <p> Nombre de missions postule:
-                 {freelanceStat.appliedCount !== undefined?freelanceStat.appliedCount: 'N/A' } </p>
+            <h3> Tableau de bord  </h3>
+            <p> Nombre de missions postule: {' '}
+                 {freelanceStat.appliedCount !== undefined? freelanceStat.appliedCount: 'N/A' } </p>
         </div>
     );
 }
