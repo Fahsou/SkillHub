@@ -77,31 +77,32 @@ export default function ClientDashboard({user, token} ){
    if(clientStat && missionWithCount ){
     return(
         <div className="client-dash-container">
-            <h3> Tableau de bord: </h3>
+            <h3> Tableau de bord  : </h3>
 
-            <p> Nombre de missions publié: 
-                {clientStat?.publishedCount !== undefined? clientStat.publishedCount  : 'N/A' }
+            <p> Nombre de missions publié: {' '}
+                 {clientStat?.publishedCount !== undefined? clientStat.publishedCount  : 'N/A' }
              </p>
-            <p> Nombre de missions acceptées: 
-                {clientStat?.acceptedCount !== undefined? clientStat.acceptedCount  : 'N/A' }
+            <p> Nombre de missions acceptées: {' '}
+                 {clientStat?.acceptedCount !== undefined? clientStat.acceptedCount  : 'N/A' }
              </p> {/* Depend de la colonne status de la mission DB */}
 
              <h4> Candidature par mission: </h4>
              {/* Vérifier si la liste de missions n'est pas vide avant de mapper */}
-             {missionWithCount.length >0?(
+              {Array.isArray(missionWithCount) && missionWithCount.length >0 ? (
                 <ul>
-                    {missionWithCount.map( mission =>{
-                        <li key={mission.id_missions} >
-                        Mission "{mission.title}": {mission.application_count} {parseInt(mission.application_count,
-                            10) > 1? 'candidatures' : 'candidature' }
-                            {/* Lien vers mission */}
-                        </li>
-                    } )}
-                </ul>
+                  {missionWithCount.map(mission =>{
+                    return(
+                      <li key={mission.id_missions} >
+                         {mission.title} : {mission.application_count} {' '}
+                        {parseInt(mission.application_count, 10) > 1? 'candidatures':'candidature'}
+                      </li>
+                    );
+                  } )}
 
-             ): (
-                <p> Vous n'avez pas encore de missions avec des candidatures. </p>
-             ) }
+                </ul>
+              ): (
+                <p> Vous n'avez pas encore de missions avec de candidatures </p>
+              ) }
 
               {/*Lien */}
               <p>Ajoutez ici d'autres informations ou liens pour le client.</p>
