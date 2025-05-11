@@ -117,7 +117,7 @@ router.get('/count/mission-has-application', authMiddleware, async(req,res)=>{
 
   }catch(err){ 
     console.error('Erreur lors de la récupération des missions avec compte candidatures par client:', err);
-    res.status().json({ error: 'Erreur serveur lors de la récupération des données.' });
+    res.status(500).json({ error: 'Erreur serveur lors de la récupération des données.' });
 
 
   }
