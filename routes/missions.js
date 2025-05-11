@@ -134,7 +134,7 @@ router.get('/count/mission-has-application', authMiddleware, async(req,res)=>{
     const clientId = req.user.id;
     try{
     // Requête SQL pour compter les missions du client où le statut est 'in_progress'
-    const result = await db.query("SELECT COUNT(*) FROM missions WHERE client_id = $1 AND status ='in_progress' ",
+    const result = await db.query("SELECT COUNT(*) FROM missions WHERE client_id = $1 AND status = 'in_progress' ",
       [clientId]
     );
     // COUNT(*) renvoie une chaîne, la convertir en nombre
