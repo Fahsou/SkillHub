@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react";
 import axios from 'axios';
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function ApplyForMissions(){
  
     const {missionId} = useParams(); //recupere l'ID mission depuis le parametre de l'URL
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     //etat pour les donnees de formulaire
     const [messageContent, setMessageContent] = useState('');
@@ -13,42 +13,46 @@ export default function ApplyForMissions(){
 
     //gestion: envoi, succes, erreur
     const [submitting, setSubmitting] = useState(false);
-    const [success, setSuccess] = useState(null);
-    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [formSubmitError, setFormSubmitError] = useState(null);
 
-    //Je veux afficher le titre du poste
+    //Je veux afficher le titre du poste recuperation details mission
     const [missionDetails, setMissionDetails]= useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loadingMission, setLoadingMission] = useState(true);
+    const [missionFetchError, setMissionFetchError] = useState(null);
 
     //gestion des missions a afficher 
     useEffect( () =>{
        const fetchMissionsDetails = async() =>{
-        setLoading(true);
-        setError(null);
+        setLoadingMission(true);
+        setMissionFetchError(null);
 
-       /* if(!missionId){
-            setError('Erreur ID mission manquant pour la candidature');
-            setLoading(false);
-        }*/
+        if(!missionId){
+            setMissionFetchError('Erreur ID mission manquant  dans l\'URL pour la candidature');
+            setLoadingMission(false);
+            return; //Arrête l'exécution de cette fonction fetch si l'ID est manquant
+        }
 
         try{
         const reponse = await axios.get(`http://localhost:5000/api/missions/${missionId}`);
         
-        setMissionDetails(reponse.data);
+        setMissionDetails(reponse.data); // Stocke les détails de la mission dans l'état
+
+        
        
         }catch(err) {
             console.error('Erreur chargement détails mission sur page candidature', err);
-            setError('Impossible d\'afficher les détails de la mission: ' + 
-                (err.reponse?.data?.error || err.message)
+            setMissionFetchError('Impossible d\'afficher les détails de la mission: ' + 
+                (err.response?.data?.error || err.message)
             );
 
         }finally{
-            setLoading(false);
+            setLoadingMission(false);
         }
 
        };
 
-       if(missionId)  fetchMissionsDetails();
+        fetchMissionsDetails();
 
     }, [missionId]); //re execute si l'ID de l'URL change
 
@@ -67,22 +71,22 @@ export default function ApplyForMissions(){
         e.preventDefault(); // empeche le rechargement de page
 
         //reinitialisation message
-        setError(null);
-        setSuccess(null);
+        setFormSubmitError(null);
+        setSuccessMessage(null);
         setSubmitting(true);
 
         const token = localStorage.getItem('token');
 
         //verification de token et utilisateur est freelance
         if(!token){
-            setError('Connectez-vous pour postuler');
+            setFormSubmitError('Connectez-vous pour postuler');
             setSubmitting(false);
             return;
         }
 
         //preparation des donnees a envoyer
         const applicationData ={
-            mission_Id: missionId, //recuperation URL
+            mission_id: missionId, //recuperation URL
             message_content: messageContent,
             //----------Gestion de CV---------------//
         }
@@ -100,31 +104,31 @@ export default function ApplyForMissions(){
             );
 
             console.log('Candidature envoyee avec succes: ', reponse.data);
-            setSuccess('Votre candidature est envoyee avec success');
+            setSuccessMessage('Votre candidature est envoyee avec success');
             //reinitialiser le formulaire
             setMessageContent('');
            // setCvFile(null);
-            navigate('/profile');
+            //navigate('/profile');
 
 
         }catch (err){
             console.error('Erreur lors de la soumission de candidature', err);
-            setError('Echec de la soumission de candidature: ', + err.response?.data?.error || err.message);
+            setFormSubmitError('Echec de la soumission de candidature: ', + err.response?.data?.error || err.message);
 
         }finally{
             setSubmitting(false);
         }
     };
 
-    if(loading){
+    if(loadingMission){
         return <p>Chargement... </p>
     }
    //verifie ID mission 
-    if(error){
+    if(missionFetchError){
         return <p style={{color: 'red'}} > Erreur : ID de mission manquant pour la candidature </p>
    }
     
-   if(!missionDetails && !loading && !error){
+   if(!missionDetails && !missionId){
     return <p style={{color: 'red'}} > Erreur: impossible de charger les details de la mission </p>
    }
 
@@ -139,6 +143,8 @@ export default function ApplyForMissions(){
                 <textarea id="messageContent"
                  value ={messageContent}
                  onChange={handleMessageChange}
+                 rows="4"
+                 required
                  />
              </div>
 
@@ -159,8 +165,8 @@ export default function ApplyForMissions(){
          </form>
 
          {/*-------Affichage de message d'erreur */}
-         {success && <p style={{ color: 'green' }}>{success}</p>}
-         {error && <p style={{ color: 'red' }}>{error}</p>}
+         {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+         {formSubmitError && <p style={{ color: 'red' }}>{formSubmitError}</p>}
 
 
         </div>
