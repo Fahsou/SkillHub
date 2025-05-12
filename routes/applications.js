@@ -205,10 +205,10 @@ router.get('/by-client', authMiddleware,  async(req, res)=>{
        m.status AS mission_status,
        m.client_id,
        u.id_users AS freelancer_id,
-       u.name AS freelancer_name,
+       u.name AS freelancer_name
       FROM applications AS app
       JOIN missions AS m ON app.mission_id = m.id_missions -- Relie candidature à sa mission
-      JOIN users AS u ON  app.freelance_id = u.id_users, -- Relie candidature au freelancer
+      JOIN users AS u ON  app.freelance_id = u.id_users -- Relie candidature au freelancer
       WHERE m.client_id = $1 -- Filtre les candidatures dont la mission appartient au client connecté
       ORDER BY app.applied_at DESC;`,
       [clientId]
