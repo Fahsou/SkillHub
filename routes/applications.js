@@ -177,5 +177,61 @@ router.get('/by-freelancer', authMiddleware, async (req, res)=>{
 
 });
 
+//------------  DASHBOARD Liste des candidature qu'un client voit dans son dash-----------------------//
+// GET /api/applications/by-client
+
+router.get('/by-client', authMiddleware,  async(req, res)=>{
+  console.log('Requête reçue sur GET /api/applications/by-client');
+
+  const clientId = req.user.id;
+
+  if(req.user.role !== 'client'){
+    console.warn(`User ${req.user.id} with role ${req.user.role} attempted to access client applications. `);
+    return res.status(403).json({error: 
+      'Accès refusé. Seuls les clients peuvent voir les candidatures pour leurs missions'});
+  }
+
+  //requete
+
+  try{
+    const result = await db.query(
+      `SELECT
+       app.id_applications,
+       app.message_content,
+       app.status AS application_status,
+       app.applied_at AS application_date,
+       m.id_missions,
+       m.title AS mission_title,
+       m.status AS mission_status,
+       m.client_id,
+       u.id_users AS freelancer_id,
+       u.name AS freelancer_name,
+      FROM applications AS app
+      JOIN missions AS m ON app.mission_id = m.id_missions -- Relie candidature à sa mission
+      JOIN users AS u ON  app.freelance_id = u.id_users, -- Relie candidature au freelancer
+      WHERE m.client_id = $1 -- Filtre les candidatures dont la mission appartient au client connecté
+      ORDER BY app.applied_at DESC;`,
+      [clientId]
+    );
+
+    console.log(`Found ${result.rows.length} application for client ID ${clientId}'s missions `);
+    res.json(result.rows);
+
+  }catch(err){
+    console.error('Erreur lors de la récupération des candidatures pour le client:', err);
+    res.status(500).json({error: 'Erreur serveur lors de la récupération des candidatures'});
+
+  }
+
+
+
+
+
+
+
+
+
+} )
+
 
 module.exports = router;
