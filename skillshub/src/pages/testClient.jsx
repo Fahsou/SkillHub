@@ -15,7 +15,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
     const [error, setError] = useState(null);
 
 
-    // --- NOUVEAUX États pour gérer l'affichage et les données des candidatures PAR MISSION ---
+    // --- États pour gérer l'affichage et les données des candidatures PAR MISSION ---
     // État pour savoir quelle mission est "dépliée" (afficher sa liste de candidatures)
     const [expandedMissions, setExpandedMissions] = useState({});
 
@@ -26,6 +26,10 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
 
     const [loadingMissionApps, setLoadingMissionApps] = useState({});
     const [missionAppsError, setMissionAppsError] = useState({});
+
+    // --- États pour gérer la MISE À JOUR du statut d'une candidature ---
+    const [updatingApp, setUpdatingApp] = useState(null);
+    const [updateError, setUPdateError] = useState(null);
 
 
    // --- useEffect pour récupérer les métriques initiales et la première liste ---
@@ -156,6 +160,53 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
         }
         // Note : Si mission.application_count est 0, on déploie, mais le fetch n'est pas déclenché par cette condition.
     };
+
+  // --- NOUVELLE Fonction pour gérer la MISE À JOUR du statut d'une candidature 
+   const handleUpdateAppStatus = async(applicationId, newStatus) =>{
+    console.log(`Attempting to update status for application ${applicationId} to ${newStatus}`);
+        setUPdateError(null);
+    // Empêche de lancer plusieurs mises à jour en même temps pour la même candidature ou si une autre est en cours
+   if(updatingApp){
+    console.warn(`Another application (${updatingApp}) is already being updated`);
+    return;
+   }
+    setUpdatingApp(applicationId);
+    const currentToken= token;
+
+    // Vérification basique 
+    if(!applicationId || !newStatus || !currentToken){
+        console.error('Missing info for status update:', { applicationId, newStatus, currentToken });
+        setUPdateError('Impossible de mettre à jour le statut : informations manquantes');
+        setUpdatingApp(null);
+    return;
+    }
+
+    try{
+        const reponse = await axios.put(`http://localhost://5000/api/applications/${applicationId}/status`,
+            {status: newStatus}, //envoi le nouveau statu dans le crsp de la requete
+            {
+                headers: {'Authorization': `Bearer ${currentToken}` }
+            }
+        );
+        console.log(`Status updated successfully for application ${applicationId}:`, reponse.data);
+        setApplicationsByMission(prev =>{
+            const updatedState = {...prev};
+
+            for(const missionId in updatedState){
+                const appIndex = updatedState[missionId].findIndex(app => app.id_applications === applicationId);
+            }
+        })
+
+    }catch(err){
+
+    }finally{
+
+    }
+
+
+   
+
+   };
 
 
     // --- Logique de Rendu ---
