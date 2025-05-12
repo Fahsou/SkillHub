@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// Si vous avez l'intention d'utiliser <Link> plus tard, importez-le
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 
 export default function ClientDash({user, token} ){ // Reçoit user et token en tant que props
 
@@ -20,13 +20,11 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
     const [expandedMissions, setExpandedMissions] = useState({});
 
     // État pour stocker les listes de candidatures chargées, indexées par l'ID de mission
-    // --- CORRECTION 1 : Nom de l'état et setter au pluriel ---
-    const[applicationsByMission, setApplicationsByMission] = useState({});
+   const[applicationsByMission, setApplicationsByMission] = useState({});
 
     // États de chargement et d'erreur spécifiques pour les appels API de chaque liste de candidatures par mission
-    // --- CORRECTION 1 : Nom de l'état et setter au pluriel ---
+
     const [loadingMissionApps, setLoadingMissionApps] = useState({});
-    // --- CORRECTION 1 : Nom de l'état et setter au pluriel ---
     const [missionAppsError, setMissionAppsError] = useState({});
 
 
@@ -81,9 +79,9 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
 
 
     // --- Fonction pour récupérer les candidatures pour UNE mission spécifique (appelée par le bouton) ---
-    // --- CORRECTION 2 : Nom de fonction corrigé ---
+   
     const fetchApplicationsForMission = async (missionIdToFetch, currentToken) => {
-        // --- CORRECTION 6 : Correction faute de frappe dans console.log ---
+        
         console.log(`Workspaceing applications for mission ID: ${missionIdToFetch}`);
         // Vérification de l'ID et du token avant l'appel (sécurité)
          if (!missionIdToFetch || !currentToken) {
@@ -94,19 +92,19 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
               return; // Arrête la fonction
          }
 
-        // --- CORRECTION 1 : Utiliser le setter corrigé ---
+       
         setLoadingMissionApps(prev => ({ ...prev, [missionIdToFetch]: true }));
-        // --- CORRECTION 1 : Utiliser le setter corrigé ---
+        
         setMissionAppsError(prev => ({ ...prev, [missionIdToFetch]: null }));
 
         try {
             // --- Appel API vers la route backend par ID de mission ---
-            // L'URL semble déjà correcte dans votre code
+          
             const reponse = await axios.get(`http://localhost:5000/api/applications/by-mission/${missionIdToFetch}`, { // <-- Template literal correct
                 headers: { 'Authorization': `Bearer ${currentToken}` }
             });
 
-            // --- CORRECTION 1 : Utiliser le setter corrigé ---
+            
             // Utilise la mise à jour fonctionnelle pour ajouter ou mettre à jour l'entrée pour cette missionId
             setApplicationsByMission( prev =>({
                 ...prev, // Copie les missions déjà présentes
@@ -118,7 +116,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
         } catch (err) {
             console.error(`Erreur lors du chargement des candidatures pour la mission ${missionIdToFetch}:`, err);
             const errorMessage = err.response?.data?.error || err.message || 'Erreur lors du chargement des candidatures.';
-            // --- CORRECTION 1 & 3 : Utiliser le setter corrigé pour l'erreur spécifique à la mission ---
+            
             setMissionAppsError(prev => ({ ...prev, [missionIdToFetch]: errorMessage }));
 
             // Gérer les erreurs d'authentification (401/403)
@@ -128,17 +126,17 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
             }
 
         } finally {
-            // --- CORRECTION 1 : Utiliser le setter corrigé ---
+           
             setLoadingMissionApps(prev => ({ ...prev, [missionIdToFetch]: false }));
         }
     };
 
 
     // --- Fonction pour gérer le clic sur le bouton "Voir candidatures" par mission -----//
-    // --- CORRECTION 2 : Nom de fonction corrigé ---
+
     const handleToggleApplications = (mission) => { // Prend l'objet mission
         const missionIdToToggle = mission.id_missions;
-        // --- CORRECTION 1 : Utiliser le nom d'état corrigé ---
+        
         const isCurrentlyExpanded = !!expandedMissions[missionIdToToggle];
 
         console.log(`Toggling applications visibility for mission ID: ${missionIdToToggle}. Currently expanded: ${isCurrentlyExpanded} `);
@@ -150,11 +148,10 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
         }))
 
         // 2. Déclenche le fetch UNIQUEMENT si on est en train de déplier ET que les données pour cette mission n'ont PAS ENCORE été chargées
-        // --- CORRECTION 1 : Utiliser le nom d'état corrigé (applicationsByMission) ---
-        // --- La condition est maintenant à l'extérieur de l'appel fetch, ce qui est correct ---
+        
         if (!isCurrentlyExpanded && !applicationsByMission[missionIdToToggle] && token && mission.application_count > 0) {
              console.log(`Mission ${missionIdToToggle} is being expanded and apps not loaded, initiating fetch.`);
-             // --- CORRECTION 2 : Appeler la fonction de fetch avec le nom corrigé ---
+             
              fetchApplicationsForMission(missionIdToToggle, token); // Déclenche la récupération
         }
         // Note : Si mission.application_count est 0, on déploie, mais le fetch n'est pas déclenché par cette condition.
@@ -197,13 +194,13 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
                         {/* --- Mapper sur la première liste des missions avec candidatures --- */}
                         {missionWithCount.map( mission => { // Pour chaque mission de cette liste...
                              const missionId = mission.id_missions;
-                             // --- CORRECTION 1 : Utiliser le nom d'état corrigé ---
+                             
                              const isExpanded = !!expandedMissions[missionId]; // Est-ce que cette mission est dépliée ?
-                             // --- CORRECTION 1 : Utiliser le nom d'état corrigé ---
+                             
                              const appsForThisMission = applicationsByMission[missionId]; // Les candidatures chargées pour cette mission
-                             // --- CORRECTION 1 : Utiliser le nom d'état corrigé ---
+                           
                              const isLoadingApps = !! loadingMissionApps[missionId]; // Est-ce que les candidatures de cette mission chargent ?
-                             // --- CORRECTION 1 : Utiliser le nom d'état corrigé ---
+                            
                              const missionAppError = missionAppsError[missionId]; // Y a-t-il une erreur pour cette mission ?
 
                              return ( // Retourne l'élément LI pour cette mission
@@ -211,7 +208,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
                                      {/* Infos de base de la mission + le bouton */}
                                      <p>
                                          Mission "{mission.title}" : {mission.application_count} {' '}
-                                        {/* --- Correction parseInt --- */}
+                                        
                                         {parseInt(mission.application_count, 10) > 1 ? 'candidatures':'candidature'}
                                          {/* --- Bouton PAR MISSION --- */}
                                          {/* Afficher le bouton seulement si la mission a potentiellement des candidatures (> 0) */}
@@ -246,7 +243,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
                                                               (Message : {app.message_content ? app.message_content.substring(0, 50) + (app.message_content.length > 50 ? '...' : '') : 'Pas de message'}) {/* Gérer message vide */}
                                                               (Postulé le : {new Date(app.application_date).toLocaleDateString()})
                                                              {/* Liens optionnels vers mission/freelancer */}
-                                                             {/* Exemple: <Link to={`/missions/${app.mission_id}`}>Mission</Link> | <Link to={`/freelancers/${app.freelancer_id}`}>Freelancer</Link> */}
+                                                             { <Link to={`/missions/${app.mission_id}`}>Mission</Link> | <Link to={`/freelancers/${app.freelancer_id}`}>Freelancer</Link> }
                                                          </li>
                                                      ))}
                                                  </ul>

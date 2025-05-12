@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const authMiddleware = require('../middleware/authe')
+const authMiddleware = require('../middleware/authe');
+
+console.log('>>> Fichier application.js charge avec la version pour /by-mission<<<');
 
 //--------------------Un freelance postule a une mission  avec un message authentifie--------------------//
 router.post('/apply', authMiddleware ,async(req,res)=>{
@@ -222,74 +224,75 @@ router.get('/by-client', authMiddleware,  async(req, res)=>{
     res.status(500).json({error: 'Erreur serveur lors de la récupération des candidatures'});
 
   }
-
+});
 //------------DASHBOARD client ou il peut voir toutes les candidatures pour chaque mission---------//
+
 router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
-console.log(`Requête reçue sur GET /api/applications/by-mission/${req.params.missionId}`);
-
-const missionId = req.params.missionId;
-const clientId = req.user.id;
-
-if(req.user.role !=='client'){
-  console.warn(`User ${req.user.id} with role ${req.user.role} attempted to access applications for mission 
-    ${missionId} (not a client) `);
-    return res.status(403).json({ error: 'Accès refusé. Seuls les clients peuvent voir les candidatures' });
-}
-
-try{
-  // 1. Vérifier que la mission existe et appartient bien au client connecté
- const missionCheck = await db.query('SELECT client_id FROM missions WHERE id_missions = $1 ',
-  [missionId]
- );
- 
- if(missionCheck.rows.length === 0 ){
-  console.warn(`Mission ${missionId} not found for check during application fetch attempt  `);
-  return res.status(404).json({error: 'Mission introuvable ou ID invalide.' });
- }
- 
- if(missionCheck.rows[0].client_id !== clientId){
-  console.warn(`Client ${clientId} attempted to access applications 
-    for mission ${missionId} owned by client ${missionCheck.rows[0].client_id}`);
-    return res.status(403).json({error: 'Accès refusé. Cette mission ne vous appartient pas.'})
- }
-
- // 2. Si la mission existe et appartient au client, récupérer les candidatures pour cette mission spécifique
-console.log(`Workspaceing applications for mission ${missionId} owned by client ${clientId}`);
-
-const result = await db.query(
-  `SELECT 
-   app.id_applications,
-   app.mission_id,
-   app.message_content,
-   app.status AS application_status,
-   app.applied_at AS application_date,
-   u.id_users AS freelancer_id,
-   u.name AS  freelancer_name -- Nom du freelancer qui a postulé
-  FROM applications AS app
-  JOIN users AS u ON app.freelance_id = u.id_users -- Joindre avec users pour le nom du freelancer
-  WHERE app.mission_id = $1 ---- Filtrer PAR L'ID de la mission passé dans l'URL
-  ORDER BY app.applied_at DESC;
-  `,
-  [missionId]
-);
- console.log(`Found ${result.rows.length} applications for mission ${missionId} `);
- res.json(result.rows);
-
-}catch(err) {
- console.error(`Erreur serveur lors de la récupération des 
-  candidatures pour la mission ${missionId}:`, err);
-  res.status(500).json({error: 
-    'Erreur serveur lors de la récupération des candidatures pour la mission' });
-}
-
-} );
-
-
-
+  console.log('>>> Route /by-mission/:missinId hander atteint <<<');
+  console.log(`Requête reçue sur GET /api/applications/by-mission/${req.params.missionId}`);
+  
+  const missionId = req.params.missionId;
+  const clientId = req.user.id;
+  
+  if(req.user.role !=='client'){
+    console.warn(`User ${req.user.id} with role ${req.user.role} attempted to access applications for mission 
+      ${missionId} (not a client) `);
+      return res.status(403).json({ error: 'Accès refusé. Seuls les clients peuvent voir les candidatures' });
+  }
+  
+  try{
+    // 1. Vérifier que la mission existe et appartient bien au client connecté
+   const missionCheck = await db.query('SELECT client_id FROM missions WHERE id_missions = $1 ',
+    [missionId]
+   );
+   
+   if(missionCheck.rows.length === 0 ){
+    console.warn(`Mission ${missionId} not found for check during application fetch attempt  `);
+    return res.status(404).json({error: 'Mission introuvable ou ID invalide.' });
+   }
+   
+   if(missionCheck.rows[0].client_id !== clientId){
+    console.warn(`Client ${clientId} attempted to access applications 
+      for mission ${missionId} owned by client ${missionCheck.rows[0].client_id}`);
+      return res.status(403).json({error: 'Accès refusé. Cette mission ne vous appartient pas.'})
+   }
+  
+   // 2. Si la mission existe et appartient au client, récupérer les candidatures pour cette mission spécifique
+  console.log(`Workspaceing applications for mission ${missionId} owned by client ${clientId}`);
+  
+  const result = await db.query(
+    `SELECT 
+     app.id_applications,
+     app.mission_id,
+     app.message_content,
+     app.status AS application_status,
+     app.applied_at AS application_date,
+     u.id_users AS freelancer_id,
+     u.name AS  freelancer_name -- Nom du freelancer qui a postulé
+    FROM applications AS app
+    JOIN users AS u ON app.freelance_id = u.id_users -- Joindre avec users pour le nom du freelancer
+    WHERE app.mission_id = $1 ---- Filtrer PAR L'ID de la mission passé dans l'URL
+    ORDER BY app.applied_at DESC;
+    `,
+    [missionId]
+  );
+   console.log(`Found ${result.rows.length} applications for mission ${missionId} `);
+   res.json(result.rows);
+  
+  }catch(err) {
+   console.error(`Erreur serveur lors de la récupération des 
+    candidatures pour la mission ${missionId}:`, err);
+    res.status(500).json({error: 
+      'Erreur serveur lors de la récupération des candidatures pour la mission' });
+  }
+  
+  } );
 
 
 
-} )
+
+
+
 
 
 module.exports = router;
