@@ -238,12 +238,14 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
                                                      {/* Mapper sur les candidatures DE CETTE MISSION */}
                                                      {appsForThisMission.map(app => ( // Utilise 'app'
                                                          <li key={app.id_applications} style={{ fontSize: '0.9em', marginBottom: '5px' }}>
-                                                             Postulé par <strong> {app.freelancer_name} </strong> - Statut : {app.application_status}
+                                                             Postulé par <strong> {app.freelancer_name} </strong> - Statut : {app.application_status} {' '}
                                                              {/* Afficher un extrait du message et la date */}
-                                                              (Message : {app.message_content ? app.message_content.substring(0, 50) + (app.message_content.length > 50 ? '...' : '') : 'Pas de message'}) {/* Gérer message vide */}
-                                                              (Postulé le : {new Date(app.application_date).toLocaleDateString()})
+                                                              Message : {app.message_content ? app.message_content.substring(0, 50) +
+                                                               (app.message_content.length > 50 ? '...' : '') : 'Pas de message'}
+                                                              Postulé le : {new Date(app.application_date).toLocaleDateString()}
                                                              {/* Liens optionnels vers mission/freelancer */}
-                                                             { <Link to={`/missions/${app.mission_id}`}>Mission</Link> | <Link to={`/freelancers/${app.freelancer_id}`}>Freelancer</Link> }
+                                                             <Link to={`/missions/${app.mission_id}`}>Mission</Link> |
+                                                              <Link to={`/freelancers/${app.freelancer_id}`}>Candidat </Link> 
                                                          </li>
                                                      ))}
                                                  </ul>
