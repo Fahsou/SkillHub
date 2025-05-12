@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react";
 import axios from 'axios';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function ApplyForMissions(){
  
     const {missionId} = useParams(); //recupere l'ID mission depuis le parametre de l'URL
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
 
     //etat pour les donnees de formulaire
     const [messageContent, setMessageContent] = useState('');
@@ -107,8 +107,11 @@ export default function ApplyForMissions(){
             setSuccessMessage('Votre candidature est envoyee avec success');
             //reinitialiser le formulaire
             setMessageContent('');
+
            // setCvFile(null);
-            //navigate('/profile'); // ajout setTimeout si utilise
+            setTimeout(()=>{
+                navigate('/showMissions');
+            },2000);
 
 
         }catch (err){
