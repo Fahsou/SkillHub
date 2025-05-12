@@ -108,12 +108,18 @@ export default function ApplyForMissions(){
             //reinitialiser le formulaire
             setMessageContent('');
            // setCvFile(null);
-            //navigate('/profile');
+            //navigate('/profile'); // ajout setTimeout si utilise
 
 
         }catch (err){
+            //erreur Doublon de candidature
+            if(err.response && err.response.status === 409){
+                console.log('Application duplicate detected by backend:', err.response.data.error);
+                setFormSubmitError(err.response.data.error); // Ceci affichera "Vous avez déjà postulé à cette mission"
+            } else{
             console.error('Erreur lors de la soumission de candidature', err);
             setFormSubmitError('Echec de la soumission de candidature: ', + err.response?.data?.error || err.message);
+            }
 
         }finally{
             setSubmitting(false);
