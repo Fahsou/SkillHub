@@ -288,7 +288,74 @@ router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
   
   } );
 
+//---------------------CLIENT ACCEPTE OU REFUSE UN CV------------------------------------------//
+  router.put('/:applicationId/status', authMiddleware, async(req, res)=>{
+    console.log(`Requête reçue sur PUT /api/applications/${req.params.applicationId}/status`);
 
+    const applicationId = req.params.applicationId;
+    const clientId = req.user.id;
+
+    const {status} =req.body;
+
+    // --- 1. Validation de l'input : Vérifier que le statut reçu est valide ---
+   const validStatus = ['pending', 'accepted', 'rejected'];
+   if(!status || ! validStatus){
+    console.warn(`Statut invalide reçu pour candidature ${applicatinId} par client ${clientId}: `, status);
+    return res.status(400).json({error: `Statut invalide fourni. Le statut doit être l'un de:
+      ${validStatus.join}(',').` });
+   }
+    // --- 2. Vérification de rôle : S'assurer que l'utilisateur est bien un client ---
+    if (req.user.role !=='client' ){
+      console.warn(`User ${req.user.id} with role ${req.user.role} attempted 
+      to update application status ${applicationId} (not a client).`);
+        return res.status(403).json({ error: 'Accès refusé. Seuls les clients peuvent gérer les candidatures.' });
+    }
+
+    try{
+      // 3a. Trouver la mission_id associée à cette candidature
+      const applicationCheck = await db.query('SELECT mission_id FROM applications WHERE id_applications =$1',
+        [applicationId]
+      );
+      // Si la candidature n'existe pas
+
+      if(applicationCheck.rows.length ===0){
+        console.warn(`Application ${applicationId} not found for status update attempt by client ${clientId}.`);
+        return res.status(404).json({error: `Candidature introuvable`});
+      }
+      const missionId = applicationCheck.rows[0].mission_id;
+      // 3b. Trouver le client_id propriétaire de cette mission
+      const missionCheck = await db.query('SELECT client_id FROM missions WHERE id_missions = $1',
+        [missionId]
+      )
+
+      if (missionCheck.rows.length === 0) {
+        console.error(`Erreur de cohérence des données : Mission ${missionId} associée
+           à la candidature ${applicationId} non trouvée.`);
+     return res.status(500).json({ error: 'Erreur interne : Mission associée à la candidature introuvable.' });
+   }
+
+    const missionOwnerClientId = missionCheck.rows[0].client_id;
+    if(missionOwnerClientId !== clientId){
+      console.warn(`Client ${clientId} attempted to update status for application ${applicationId}
+         (mission ${missionId}) owned by client ${missionOwnerClientId}. Access denied.`);
+      return res.status(403).json({error: 'Accès refusé. Vous ne possédez pas la mission associée à cette candidature.' });
+    }
+
+    // --- 4. Si toutes les vérifications de sécurité passent, procéder à la mise à jour du statut ---
+    console.log(`Updating status for application ${applicationId} 
+      to '${status}' by client ${clientId} for mission ${missionId}.`);
+      const result = await db.query(
+        'UPDATE applications SET status =$1 WHERE id_applications = $2 RETURNING',
+        [status, applicationId ]
+      )
+      console.log('Statut de candidature mis à jour avec succès:', result.rows[0]);
+      res.json(result.rows[0]);
+
+    }catch(err){
+      console.error(`Erreur serveur lors de la mise à jour du statut de la candidature ${applicationId}`, err);
+      res.status(500).json({error:'Erreur serveur lors de la mise à jour du statut de la candidature' });
+    }
+ });
 
 
 
