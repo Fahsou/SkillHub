@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Register(){
     const [formData, setFormData] = useState({ //stockage donnee
@@ -8,6 +9,10 @@ export default function Register(){
         password: '',
         role:'client',
     });
+
+    const[success, setSuccessMessage]= useState(null);
+    const[error, setError]= useState(null);
+    const navigate = useNavigate();
 
     const handleChange = (e) =>{
         setFormData(prev =>({
@@ -18,13 +23,21 @@ export default function Register(){
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
+
+        setSuccessMessage(null);
+        setError(null);
+
         try{
             const res = await axios.post('http://localhost:5000/api/auth/register', formData);
             console.log('Inscription resussi', res.data);
-          alert('Inscritption reussi');
+          setSuccessMessage('Inscription reussi');
+            setTimeout(()=>{
+                navigate('/profile');
+            } , 2000 );
+
         }catch(err){
             console.error('Erreur inscritpion', err.reponse?.data || err.message);
-            alert('Echec inscription');
+            setError('Echec inscription');
         }
     };
 
@@ -41,8 +54,12 @@ export default function Register(){
              </select>
              <button type="submit"> S'inscrire </button>
             </form>
+
+            {success && <p style={{ color: 'green' }}>{success}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
+
         </div>
     );
 }
 
-//export default  Register;
