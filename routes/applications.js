@@ -227,8 +227,8 @@ router.get('/by-client', authMiddleware,  async(req, res)=>{
 router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
 console.log(`Requête reçue sur GET /api/applications/by-mission/${req.params.missionId}`);
 
-const missionId = req.params.id;
-const clientId = req.params.id;
+const missionId = req.params.missionId;
+const clientId = req.user.id;
 
 if(req.user.role !=='client'){
   console.warn(`User ${req.user.id} with role ${req.user.role} attempted to access applications for mission 

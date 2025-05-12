@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 // --- Importez les composants spécifiques aux rôles ---//
-import ClientDashboard from './ClientDashboard';
+import ClientDash from './testClient';
 import FreelancerDashboard from './FreelancerDashboard';
 
 export default function Dashboard(){
@@ -76,7 +76,7 @@ export default function Dashboard(){
             <p> Vous etes un {user.role} </p>
         
         {/* --- Rendu Conditionnel du Tableau de Bord Spécifique au Rôle --- */}
-        {user.role === 'client' && <ClientDashboard user={user} token={token} />}
+        {user.role === 'client' && <ClientDash user={user} token={token} />}
         {user.role === 'freelance' && <FreelancerDashboard user={user} token={token} />}
 
         {!['client', 'freelance'].includes(user.role) && (
