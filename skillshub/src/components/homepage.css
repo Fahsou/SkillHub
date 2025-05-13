@@ -1,0 +1,90 @@
+/* Homepage.css */
+
+/* Style pour le conteneur principal de la page */
+.homepage-container {
+  text-align: center; /* Centre le contenu horizontalement */
+  padding: 80px 20px; /* Augmente l'espacement intérieur en haut et en bas */
+  background-color: #eef2f7; /* Couleur de fond légèrement bleutée */
+  color: #333; /* Couleur du texte par défaut */
+  min-height: calc(100vh - var(--navbar-height, 0px) - var(--footer-height, 0px)); /* Définit une hauteur minimale, ajustez selon votre layout global */
+  display: flex; /* Utilise flexbox pour centrer verticalement si souhaité */
+  flex-direction: column; /* Empile les éléments verticalement */
+  justify-content: center; /* Centre verticalement le contenu */
+  align-items: center; /* Centre horizontalement si flex */
+  font-family: 'Arial', sans-serif; /* Police de caractères plus courante */
+}
+
+/* Style pour le titre principal */
+.homepage-container h1 {
+  color: #0056b3; /* Bleu plus foncé pour le titre */
+  margin-bottom: 25px; /* Espacement */
+  font-size: 2.5em; /* Grande taille de police */
+  font-weight: bold;
+}
+
+/* Style pour la description */
+.homepage-container p {
+  color: #555; /* Gris plus foncé pour la description */
+  font-size: 1.2em; /* Taille de police plus grande */
+  line-height: 1.6; /* Espacement entre les lignes */
+  max-width: 700px; /* Largeur maximale pour le texte */
+  margin: 0 auto 30px auto; /* Centre le paragraphe et ajoute un espacement en bas */
+}
+
+/* Style pour le conteneur des liens/boutons */
+.homepage-links {
+  margin-top: 20px;
+}
+
+/* Style pour les liens qui ressemblent à des boutons */
+.homepage-link-button {
+  display: inline-block; /* Permet d'appliquer padding/margin correctement */
+  text-decoration: none; /* Supprime le soulignement */
+  color: #007bff; /* Couleur du texte (bleu) */
+  background-color: transparent; /* Fond transparent par défaut */
+  padding: 12px 25px; /* Espacement intérieur */
+  border: 2px solid #007bff; /* Bordure bleue */
+  border-radius: 5px; /* Coins légèrement arrondis */
+  margin: 0 10px; /* Espacement entre les boutons */
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Animation douce au survol */
+}
+
+/* Style au survol des liens/boutons */
+.homepage-link-button:hover {
+  background-color: #007bff; /* Fond bleu au survol */
+  color: white; /* Texte blanc au survol */
+  border-color: #007bff; /* Bordure reste bleue */
+}
+
+/* Style pour la section "Pourquoi SkillHub ?" */
+.homepage-features {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #ddd;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.homepage-features h2 {
+    color: #0056b3;
+    margin-bottom: 20px;
+}
+
+.homepage-features p {
+    font-size: 1.1em;
+    color: #666;
+}
+
+/* Style simple pour le footer placeholder */
+.homepage-footer-placeholder {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    color: #888;
+    font-size: 0.9em;
+}
+
+/* Ajoutez d'autres styles au besoin */

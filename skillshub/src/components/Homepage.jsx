@@ -1,40 +1,60 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+// Si vous utilisez React Router DOM pour les liens, importez Link
+// Assurez-vous d'avoir installé react-router-dom si ce n'est pas déjà fait (npm install react-router-dom ou yarn add react-router-dom)
+import { Link } from 'react-router-dom';
 
-export default function Homepage(){
-    return (
-        <div className="Homepage-container">
-            <h2 className="home-title"> Bienvenue sur Freshers </h2>
+// --- Importer le fichier CSS ---
+// Assurez-vous que le chemin d'accès à votre fichier CSS est correct
+import './homepage.css';
 
-        <p>
-        Connectez les Jeunes Diplômés  avec les Clients pour des missions passionnantes. 
-        Aidez les jeunes sans experiences pro a acquerir leur premiere mission avec leur domaine.
+// Assurez-vous que ce composant est bien exporté par défaut
+export default function Homepage() {
+  return (
+    // Utilisez un div pour le conteneur principal de la page
+    // Utilisez des classes CSS pour un stylage plus facile
+    <div className="homepage-container">
+      {/* Titre principal */}
+      <h1>Bienvenue sur SkillHub !</h1>
+
+      {/* Description courte de la plateforme */}
+      <p>
+        Connectez les Jeunes Diplômés Freelancers avec les Clients pour des missions passionnantes.
       </p>
 
-      <Link to="/login" className="homepage-link-button">
+      {/* Section pour les liens de navigation importants */}
+      <div className="homepage-links">
+        {/* Lien vers la page de connexion */}
+        {/* Utilisez le composant Link de react-router-dom */}
+        <Link to="/login" className="homepage-link-button"> {/* Ajoutez une classe pour styler comme un bouton */}
           Se connecter
         </Link>
-     <Link to="/register" className="homepage-link-button"> 
+
+        {/* Lien vers la page d'inscription */}
+        <Link to="/register" className="homepage-link-button"> {/* Ajoutez une classe pour styler comme un bouton */}
           S'inscrire
         </Link>
 
-        <div className="homepage-features">
+        {/* Optionnel: Lien vers la page de navigation des missions (pour les freelancers) */}
+        {/* Ce lien pourrait n'apparaître que si l'utilisateur n'est PAS connecté */}
+         {/* <Link to="/missions" className="homepage-link-button">
+           Voir les missions disponibles
+         </Link> */}
+
+      </div>
+
+      {/* Optionnel: Une section pour les fonctionnalités clés, des témoignages, etc. */}
+       <div className="homepage-features"> {/* Ajoutez une classe CSS */}
          <h2>Pourquoi SkillHub ?</h2>
          <p>Trouvez des talents ou des opportunités rapidement.</p>
+         {/* Ajoutez d'autres points forts ici */}
        </div>
 
-       <div className="homepage-footer-placeholder">
-            <p>&copy; 2025 Freshers. Tous droits réservés.</p>
+       {/* Optionnel: Footer simple ou informations de contact */}
+        <div className="homepage-footer-placeholder">
+            <p>&copy; 2025 SkillHub. Tous droits réservés.</p>
         </div>
 
 
-
-
-
-
-
-
-
-        </div>
-    )
+    </div>
+  );
 }
