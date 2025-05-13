@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db');
 const authMiddleware = require('../middleware/authe');
 
-console.log('>>> Fichier application.js charge avec la version pour /by-mission<<<');
+console.log('>>> Fichier application.js charge avec la version pour <<<');
 
 //--------------------Un freelance postule a une mission  avec un message authentifie--------------------//
 router.post('/apply', authMiddleware ,async(req,res)=>{
@@ -288,9 +288,11 @@ router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
   
   } );
 
+  console.log('>>> Status CV <<<');
+
 //---------------------CLIENT ACCEPTE OU REFUSE UN CV------------------------------------------//
-  router.put('/:applicationId/status', authMiddleware, async(req, res)=>{
-    console.log(`Requête reçue sur PUT /api/applications/${req.params.applicationId}/status`);
+router.put('/:applicationId/status', authMiddleware, async(req, res)=>{
+console.log(`Requête reçue sur PUT /api/applications/${req.params.applicationId}/status`);
 
     const applicationId = req.params.applicationId;
     const clientId = req.user.id;
@@ -299,10 +301,10 @@ router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
 
     // --- 1. Validation de l'input : Vérifier que le statut reçu est valide ---
    const validStatus = ['pending', 'accepted', 'rejected'];
-   if(!status || ! validStatus){
-    console.warn(`Statut invalide reçu pour candidature ${applicatinId} par client ${clientId}: `, status);
+   if(!status || !validStatus.includes(status)){
+    console.warn(`Statut invalide reçu pour candidature ${applicationId} par client ${clientId}: `, status);
     return res.status(400).json({error: `Statut invalide fourni. Le statut doit être l'un de:
-      ${validStatus.join}(',').` });
+      ${validStatus.join(',')}.` });
    }
     // --- 2. Vérification de rôle : S'assurer que l'utilisateur est bien un client ---
     if (req.user.role !=='client' ){
@@ -326,7 +328,7 @@ router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
       // 3b. Trouver le client_id propriétaire de cette mission
       const missionCheck = await db.query('SELECT client_id FROM missions WHERE id_missions = $1',
         [missionId]
-      )
+      );
 
       if (missionCheck.rows.length === 0) {
         console.error(`Erreur de cohérence des données : Mission ${missionId} associée
@@ -344,10 +346,9 @@ router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
     // --- 4. Si toutes les vérifications de sécurité passent, procéder à la mise à jour du statut ---
     console.log(`Updating status for application ${applicationId} 
       to '${status}' by client ${clientId} for mission ${missionId}.`);
-      const result = await db.query(
-        'UPDATE applications SET status =$1 WHERE id_applications = $2 RETURNING',
-        [status, applicationId ]
-      )
+    const result = await db.query('UPDATE applications SET status = $1 WHERE id_applications = $2 RETURNING*',
+        [status, applicationId ] );
+
       console.log('Statut de candidature mis à jour avec succès:', result.rows[0]);
       res.json(result.rows[0]);
 
@@ -355,7 +356,7 @@ router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
       console.error(`Erreur serveur lors de la mise à jour du statut de la candidature ${applicationId}`, err);
       res.status(500).json({error:'Erreur serveur lors de la mise à jour du statut de la candidature' });
     }
- });
+  });
 
 
 

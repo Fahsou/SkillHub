@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 
 
 // --- Importez les composants spécifiques aux rôles ---//
-import ClientDash from './testClient';
+import testClient from './testClient';
 import FreelancerDashboard from './FreelancerDashboard';
+import ClientDash from './testClient';
 
 export default function Dashboard(){
 

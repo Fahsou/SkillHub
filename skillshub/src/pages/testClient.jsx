@@ -29,7 +29,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
 
     // --- États pour gérer la MISE À JOUR du statut d'une candidature ---
     const [updatingApp, setUpdatingApp] = useState(null);
-    const [updateError, setUPdateError] = useState(null);
+    const [updateError, setUpdateError] = useState(null);
 
 
    // --- useEffect pour récupérer les métriques initiales et la première liste ---
@@ -164,7 +164,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
   // --- NOUVELLE Fonction pour gérer la MISE À JOUR du statut d'une candidature 
    const handleUpdateAppStatus = async(applicationId, newStatus) =>{
     console.log(`Attempting to update status for application ${applicationId} to ${newStatus}`);
-        setUPdateError(null);
+        setUpdateError(null);
     // Empêche de lancer plusieurs mises à jour en même temps pour la même candidature ou si une autre est en cours
    if(updatingApp){
     console.warn(`Another application (${updatingApp}) is already being updated`);
@@ -176,139 +176,192 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
     // Vérification basique 
     if(!applicationId || !newStatus || !currentToken){
         console.error('Missing info for status update:', { applicationId, newStatus, currentToken });
-        setUPdateError('Impossible de mettre à jour le statut : informations manquantes');
+        setUpdateError('Impossible de mettre à jour le statut : informations manquantes');
         setUpdatingApp(null);
     return;
     }
 
     try{
-        const reponse = await axios.put(`http://localhost://5000/api/applications/${applicationId}/status`,
+        const reponse = await axios.put(`http://localhost:5000/api/applications/${applicationId}/status`,
             {status: newStatus}, //envoi le nouveau statu dans le crsp de la requete
             {
                 headers: {'Authorization': `Bearer ${currentToken}` }
             }
         );
         console.log(`Status updated successfully for application ${applicationId}:`, reponse.data);
+        console.log('Donnees recus du backend', reponse.data);
         setApplicationsByMission(prev =>{
             const updatedState = {...prev};
 
             for(const missionId in updatedState){
                 const appIndex = updatedState[missionId].findIndex(app => app.id_applications === applicationId);
+
+                if(appIndex!== -1){
+                    updatedState[missionId][appIndex] = reponse.data;
+                    console.log(`Frontend state updated for application ${applicationId} in mission ${missionId}.`);
+                    break; // La mise à jour est faite, on peut sortir de la boucle
+                }
             }
+            return updatedState;
         })
 
     }catch(err){
+        console.error(`Erreur lors de la mise à jour du statut de la candidature ${applicationId}:`, err);
+        const errorMessage = err.response?.data?.error || err.message || 'Erreur lors de la mise à jour du statut.';
+        setUpdateError(`Échec de la mise à jour du statut ID ${applicationId}: ${errorMessage}`);
+
+        if(err.response && (err.response.status ===401 || err.response.status === 403)){
+            localStorage.removeItem('token');
+        }
 
     }finally{
+        setUpdatingApp(null);
 
     }
+  };
 
+  const handleAcceptClick = (applicationId)=>{
+    handleUpdateAppStatus(applicationId, 'accepted');
+  };
 
-   
-
-   };
+  const handleRejectClick = (applicationId)=>{
+    handleUpdateAppStatus(applicationId, 'rejected');
+  };
 
 
     // --- Logique de Rendu ---
 
     // Si en cours de chargement initial
-    if(loading){
+if(loading){
         return <p> Chargement initial du tableau de bord client...</p>
     }
 
     // Si une erreur s'est produite pendant le chargement initial
-    if(error){
+if(error){
         return <p style={{color: 'red'}} > {error} </p>
     }
 
     // --- Rendu principal si les données initiales sont chargées (au moins clientStat) ---
     // On vérifie si clientStat est chargé pour afficher la première partie du dashboard
-    if(clientStat){
-        return(
-            <div className="client-dash-container">
-                <h3> Tableau de bord Client : </h3>
+if(clientStat){
+     return(
+    <div className="client-dash-container">
+        <h3> Tableau de bord Client : </h3>
 
                 {/* --- Section des Métriques (Comptes) --- */}
-                <p> Nombre de missions publiées : {' '} {/* Espace ajouté */}
-                     {clientStat?.publishedCount !== undefined ? clientStat.publishedCount  : 'N/A' }
-                 </p>
-                <p> Nombre de missions acceptées : {' '} {/* Espace ajouté */}
-                     {clientStat?.acceptedCount !== undefined ? clientStat.acceptedCount  : 'N/A' }
-                 </p>
+        <p> Nombre de missions publiées : {' '} {/* Espace ajouté */}
+             {clientStat?.publishedCount !== undefined ? clientStat.publishedCount  : 'N/A' }
+        </p>
+         <p> Nombre de missions acceptées : {' '} {/* Espace ajouté */}
+            {clientStat?.acceptedCount !== undefined ? clientStat.acceptedCount  : 'N/A' }
+        </p>
 
                  {/* --- Section "Missions avec candidatures" (la première liste mappée, avec les NOUVEAUX boutons) --- */}
-                 <h4> Missions avec candidatures : </h4> {/* Titre ajusté */}
+        <h4> Missions avec candidatures : </h4> {/* Titre ajusté */}
 
                  {/* Vérifier si missionWithCount est un tableau ET s'il a des éléments */}
-                 {Array.isArray(missionWithCount) && missionWithCount.length > 0 ? (
-                    <ul>
+     {Array.isArray(missionWithCount) && missionWithCount.length > 0 ? (
+        <ul>
                         {/* --- Mapper sur la première liste des missions avec candidatures --- */}
-                        {missionWithCount.map( mission => { // Pour chaque mission de cette liste...
-                             const missionId = mission.id_missions;
+        {missionWithCount.map( mission => { // Pour chaque mission de cette liste...
+         const missionId = mission.id_missions;
                              
-                             const isExpanded = !!expandedMissions[missionId]; // Est-ce que cette mission est dépliée ?
+        const isExpanded = !!expandedMissions[missionId]; // Est-ce que cette mission est dépliée ?
                              
-                             const appsForThisMission = applicationsByMission[missionId]; // Les candidatures chargées pour cette mission
+        const appsForThisMission = applicationsByMission[missionId]; // Les candidatures chargées pour cette mission
                            
-                             const isLoadingApps = !! loadingMissionApps[missionId]; // Est-ce que les candidatures de cette mission chargent ?
+        const isLoadingApps = !! loadingMissionApps[missionId]; // Est-ce que les candidatures de cette mission chargent ?
                             
-                             const missionAppError = missionAppsError[missionId]; // Y a-t-il une erreur pour cette mission ?
+        const missionAppError = missionAppsError[missionId]; // Y a-t-il une erreur pour cette mission ?
 
-                             return ( // Retourne l'élément LI pour cette mission
-                                 <li key={missionId} style={{ marginBottom: '10px', border: '1px solid #ccc', padding: '10px' }}> {/* Styles de base */}
+        return ( // Retourne l'élément LI pour cette mission
+         <li key={missionId} style={{ marginBottom: '10px', border: '1px solid #ccc', padding: '10px' }}> {/* Styles de base */}
                                      {/* Infos de base de la mission + le bouton */}
-                                     <p>
-                                         Mission "{mission.title}" : {mission.application_count} {' '}
+            <p>
+             Mission "{mission.title}" : {mission.application_count} {' '}
                                         
-                                        {parseInt(mission.application_count, 10) > 1 ? 'candidatures':'candidature'}
+             {parseInt(mission.application_count, 10) > 1 ? 'candidatures':'candidature'}
                                          {/* --- Bouton PAR MISSION --- */}
                                          {/* Afficher le bouton seulement si la mission a potentiellement des candidatures (> 0) */}
-                                         {mission.application_count > 0 && (
-                                             // --- CORRECTION 5 : Syntaxe et texte du bouton ---
-                                             <button onClick={() => handleToggleApplications(mission)}
-                                                     style={{ marginLeft: '15px', padding: '5px 10px', cursor: 'pointer' }}>
-                                                 {isExpanded ? 'Masquer candidatures' : `Voir candidatures (${mission.application_count})`} {/* Texte dynamique du bouton */}
-                                             </button>
+             {mission.application_count > 0 && (
+                                            
+            <button onClick={() => handleToggleApplications(mission)}
+             style={{ marginLeft: '15px', padding: '5px 10px', cursor: 'pointer' }}>
+             {isExpanded ? 'Masquer candidatures' : `Voir candidatures (${mission.application_count})`} {/* Texte dynamique du bouton */}
+             </button>
                                          )}
-                                     </p>
+             </p>
 
                                      {/* --- Affichage conditionnel de la liste des candidatures POUR CETTE MISSION --- */}
                                      {/* Cette section s'affiche si cette mission spécifique est "dépliée" */}
-                                     {isExpanded && (
-                                         <div style={{ marginTop: '10px', borderTop: '1px dashed #eee', paddingTop: '10px' }}>
-                                             <h6>Candidatures pour cette mission :</h6>
+            {isExpanded && (
+             <div style={{ marginTop: '10px', borderTop: '1px dashed #eee', paddingTop: '10px' }}>
+              <h6>Candidatures pour cette mission :</h6>
 
                                              {/* Gérer les états de chargement/erreur pour les candidatures de cette mission */}
-                                             {isLoadingApps ? (
-                                                 <p> Chargement des candidatures pour "{mission.title}"...</p>
-                                             ) : missionAppError ? (
-                                                 <p style={{ color: 'red' }}>{missionAppError}</p>
-                                             ) : Array.isArray(appsForThisMission) && appsForThisMission.length > 0 ? (
+                {isLoadingApps ? (
+                <p> Chargement des candidatures pour "{mission.title}"...</p>
+                    ) : missionAppError ? (
+                    <p style={{ color: 'red' }}>{missionAppError}</p>
+                     ) : Array.isArray(appsForThisMission) && appsForThisMission.length > 0 ? (
                                                   // Si la liste des candidatures pour cette mission est chargée et non vide
-                                                 <ul>
+                    <ul>
                                                      {/* Mapper sur les candidatures DE CETTE MISSION */}
-                                                     {appsForThisMission.map(app => ( // Utilise 'app'
-                                                         <li key={app.id_applications} style={{ fontSize: '0.9em', marginBottom: '5px' }}>
-                                                             Postulé par <strong> {app.freelancer_name} </strong> - Statut : {app.application_status} {' '}
+                    {appsForThisMission.map(app => ( // Utilise 'app'
+                    <li key={app.id_applications} style={{ fontSize: '0.9em', marginBottom: '5px' }}>
+                     Postulé par <strong> {app.freelancer_name} </strong> - Statut : {app.application_status} {' '}
                                                              {/* Afficher un extrait du message et la date */}
-                                                              Message : {app.message_content ? app.message_content.substring(0, 50) +
-                                                               (app.message_content.length > 50 ? '...' : '') : 'Pas de message'}
-                                                              Postulé le : {new Date(app.application_date).toLocaleDateString()}
+                     Message : {app.message_content ? app.message_content.substring(0, 50) +
+                     (app.message_content.length > 50 ? '...' : '') : 'Pas de message'}
+                     Postulé le : {new Date(app.application_date).toLocaleDateString()}
+
+                <div style={{ marginTop: '5px' }}>  
+                     {app.application_status === 'pending' && !updatingApp && (
+                     <>
+                      <button onClick={()=>{ handleAcceptClick(app.id_applications)}} style={{ padding: '3px 8px', cursor: 'pointer',  backgroundColor: '#4CAF50', color: 'white',
+                          border: 'none', borderRadius: '3px', marginRight: '5px' }}  >
+                       Accepter
+                     </button>
+
+                     <button onClick={()=>{
+                      handleRejectClick(app.id_applications)}
+                     } style={{ padding: '3px 8px', cursor: 'pointer', backgroundColor: '#f44336', 
+                     color: 'white', border: 'none', borderRadius: '3px' }} >
+                    Rejeter
+                    </button>
+
+                     </>
+                     )}
+              </div>
+                {updatingApp === app.id_applications && (
+                  <span style={{ color: 'blue', marginLeft: '10px' }}>Mise à jour...</span>
+
+                ) }
+                {app.application_status!=='pending' && updatingApp !==app.id_applications &&(
+                    <span style={{ fontWeight: 'bold', marginLeft: '10px', 
+                        color: app.application_status === 'accepted' ? 'green' : 'red' }} >
+                    
+                   {app.application_status ==='accepted'? 'Accepté': 'Rejeté'}
+                  
+
+                        </span>
+                ) }
+
                                                              {/* Liens optionnels vers mission/freelancer */}
-                                                             <Link to={`/missions/${app.mission_id}`}>Mission</Link> |
-                                                              <Link to={`/freelancers/${app.freelancer_id}`}>Candidat </Link> 
-                                                         </li>
-                                                     ))}
-                                                 </ul>
-                                             ) : Array.isArray(appsForThisMission) && appsForThisMission.length === 0 ? (
+                         <Link to={`/missions/${app.mission_id}`}>Mission</Link> |
+                         <Link to={`/freelancers/${app.freelancer_id}`}>Candidat </Link> 
+                        </li>
+                       ))}
+                     </ul>
+                     ) : Array.isArray(appsForThisMission) && appsForThisMission.length === 0 ? (
                                                  // Si la liste pour cette mission est chargée et vide
-                                                 <p> Aucune candidature trouvée pour cette mission.</p>
-                                             ) : (
+                     <p> Aucune candidature trouvée pour cette mission.</p>
+                     ) : (
                                                  // État initial avant le fetch ou si l'état n'est pas un tableau valide
-                                                 null
-                                             )}
-                                         </div>
-                                     )} {/* Fin de l'affichage conditionnel de la liste par mission */}
+                          null
+                      )}
+                    </div>
+                      )} {/* Fin de l'affichage conditionnel de la liste par mission */}
 
                                  </li>
                              ); // Fin du return du map principal
@@ -318,11 +371,13 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
                      <p> Vous n'avez pas encore de missions avec des candidatures à afficher ici.</p> // Message si la première liste est vide
                  )}
 
-
+                 {updateError && !updatingApp && (
+                    <p style={{color: 'red', marginTop: '15px'}} > {updateError}   </p>
+                 )}
                  {/* L'ancienne section "Voir toutes les candidatures" est commentée */}
 
                  {/* Texte placeholder générique */}
-                  <p style={{ marginTop: '20px' }}> Ajoutez ici d'autres informations ou liens pour le client.</p>
+                <p style={{ marginTop: '20px' }}> Ajoutez ici d'autres informations ou liens pour le client.</p>
 
             </div>
         );

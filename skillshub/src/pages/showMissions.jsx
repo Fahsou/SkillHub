@@ -52,7 +52,9 @@ export default function ShowMissions(){
                            <p>{mission.description}</p>
                            {mission.created_at && (
                                <p>Créée le: {new Date(mission.created_at).toLocaleDateString()}</p>
+                            
                            )}
+                           
                            <Link to={`/missions/${mission.id_missions}`}>Voir plus </Link>
                        </div>
                        
