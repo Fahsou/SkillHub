@@ -28,6 +28,7 @@ const userRoutes = require('./routes/users');
 const skillRoutes = require('./routes/skills');
 const missionRoutes = require('./routes/missions');
 const applicationsRoutes = require('./routes/applications');
+const searchRoutes = require('./routes/search');
 
 //definir les routes
 app.use('/api/auth', authRoutes);
@@ -35,6 +36,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/missions', missionRoutes);
 app.use('/api/applications', applicationsRoutes);
+app.use('/api/search', searchRoutes);
 
 
 
