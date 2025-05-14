@@ -24,14 +24,18 @@ export default function Homepage() {
       {/* Section pour les liens de navigation importants */}
       <div className="homepage-links">
         {/* Lien vers la page de connexion */}
-        {/* Utilisez le composant Link de react-router-dom */}
-        <Link to="/login" className="homepage-link-button"> {/* Ajoutez une classe pour styler comme un bouton */}
+   
+        <Link to="/login" className="homepage-link-button"> 
           Se connecter
         </Link>
 
         {/* Lien vers la page d'inscription */}
-        <Link to="/register" className="homepage-link-button"> {/* Ajoutez une classe pour styler comme un bouton */}
+        <Link to="/register" className="homepage-link-button"> 
           S'inscrire
+        </Link>
+
+        <Link to="/showMissions" className="homepage-link-button">
+          Voir des missions
         </Link>
 
         {/* Optionnel: Lien vers la page de navigation des missions (pour les freelancers) */}

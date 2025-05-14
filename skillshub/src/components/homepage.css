@@ -45,7 +45,7 @@
   padding: 12px 25px; /* Espacement intérieur */
   border: 2px solid #007bff; /* Bordure bleue */
   border-radius: 5px; /* Coins légèrement arrondis */
-  margin: 0 10px; /* Espacement entre les boutons */
+  margin: 0 10px 10px 0; /* Espacement entre les boutons */
   font-size: 1em;
   font-weight: bold;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Animation douce au survol */

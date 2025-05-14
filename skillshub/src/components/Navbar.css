@@ -1,173 +1,123 @@
-/* src/components/Navbar.css */
+/* Styles Généraux de la Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3498db; /* <-- Changé au bleu */
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: white; /* Optionnel : met la couleur par défaut du texte en blanc */
+}
 
-/* --- Styles existants pour la navbar de base (fond, padding, etc.) --- */
-.custom-navbar {
-    background-color: #007bff;
-    padding: 10px 20px;
-    color: white;
+.navbar-brand {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ffffff; /* <-- Changé au blanc */
+  text-decoration: none;
+}
+
+/* Styles pour les liens de navigation (pour Desktop) */
+.navbar-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-links li {
+  margin-left: 20px;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #ffffff; /* <-- Changé au blanc pour être visible sur fond bleu */
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+  color: #ecf0f1; /* Couleur légèrement plus claire au survol */
+}
+
+/* Styles pour le bouton hamburger (caché sur Desktop) */
+.hamburger-button {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 20px;
+}
+
+
+/* Styles pour les barres de l'icône hamburger */
+.hamburger-icon {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: #ffffff; /* <-- Changé au blanc pour être visible */
+  border-radius: 3px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* MEDIA QUERY pour les écrans plus petits (mobiles) */
+@media (max-width: 768px) { /* Ajuste cette valeur si nécessaire */
+
+  /* Affiche le bouton hamburger sur mobile */
+  .hamburger-button {
     display: flex;
-    justify-content: space-between; /* Gardez space-between pour pousser le brand à gauche et le reste à droite */
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    /* position: sticky; top: 0; z-index: 1000; */ /* Optionnel: pour que la navbar reste en haut en scrollant */
   }
-  
-  /* Style pour le nom du site / logo */
-  .custom-navbar-brand {
-    color: white;
-    text-decoration: none;
-    font-size: 1.5em;
-    font-weight: bold;
-    /* Pas de marge à droite ici si justify-content: space-between est utilisé sur le parent */
+
+  /* Styles pour les liens de navigation sur mobile */
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px; /* Ajuste en fonction de la hauteur de ta navbar */
+    left: 0;
+    width: 100%;
+    background-color: #3498db; /* <-- Tu peux choisir de garder le fond bleu ou mettre un autre fond pour le menu ouvert */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 20px 0;
+    transition: all 0.3s ease-in-out;
+    z-index: 999;
+    overflow-y: auto;
   }
-  
-  /* Style pour le bouton de basculement (Hamburger) */
-  .navbar-toggler {
-    /* Styles pour le bouton lui-même (fond, bordure, couleur icône) */
-    background-color: transparent;
-    border: 1px solid white; /* Bordure blanche pour le bouton */
-    color: white; /* Couleur de l'icône/texte du bouton */
-    font-size: 1.5em; /* Taille de l'icône hamburger */
-    padding: 5px 10px;
-    cursor: pointer;
-    /* display: none; */ /* Sera géré par la @media query pour être affiché sur mobile */
+
+  /* Styles lorsque le menu est ouvert (classe 'open' ajoutée par React) */
+  .navbar-links.open {
+    display: flex;
   }
-  
-  /* Conteneur des liens de navigation (UL) */
-  .navbar-links-container {
-      /* display: flex; */ /* Sera géré par la @media query */
-      /* flex-direction: row; */ /* Sera géré par la @media query */
-      /* align-items: center; */ /* Sera géré par la @media query */
+
+  .navbar-links li {
+    margin: 10px 0;
+    text-align: center;
   }
-  
-  
-  /* La liste des liens elle-même */
-  .custom-navbar-nav {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    /* display: flex; */ /* Sera géré par la @media query */
-    /* flex-direction: row; */ /* Sera géré par la @media query */
+
+  .navbar-links a {
+    color: #ffffff; /* <-- S'assurer qu'ils sont blancs aussi dans le menu mobile */
+    font-size: 1.2em;
   }
-  
-  /* Chaque élément de la liste de liens */
-  .custom-nav-item {
-    /* margin-left: 20px; */ /* Sera géré par la @media query */
+
+
+  /* Styles Optionnels : Animation de l'icône hamburger */
+  /* N'a pas besoin de changer, les barres étant déjà blanches */
+  .hamburger-button.open .hamburger-icon:nth-child(1) {
+    transform: rotate(-45deg) translate(-6px, 6px);
   }
-  
-  /* Style pour les liens */
-  .custom-nav-link {
-    color: white;
-    text-decoration: none;
-    padding: 5px 0;
-    transition: color 0.3s ease;
+
+  .hamburger-button.open .hamburger-icon:nth-child(2) {
+    opacity: 0;
   }
-  
-  .custom-nav-link:hover {
-    color: #ced4da;
+
+  .hamburger-button.open .hamburger-icon:nth-child(3) {
+    transform: rotate(45deg) translate(-6px, -6px);
   }
-  
-  /* Style pour le bouton de déconnexion */
-  .custom-logout-button {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      padding: 5px 0;
-      /* margin-left: 20px; */ /* Sera géré par la @media query */
-      font-size: 1em;
-      text-decoration: none;
-      transition: color 0.3s ease;
-  }
-  
-  .custom-logout-button:hover {
-      color: #ced4da;
-  }
-  
-  /* --- Styles Responsive pour les écrans Mobiles (par défaut) --- */
-  
-  /* Le bouton hamburger est visible par défaut */
-  .navbar-toggler {
-      display: block; /* Affiche le bouton hamburger sur mobile */
-  }
-  
-  /* Le conteneur des liens est masqué par défaut sur mobile */
-  .navbar-links-container {
-      display: none; /* Cache le conteneur des liens par défaut */
-      width: 100%; /* Optionnel: prend toute la largeur disponible si affiché en colonne */
-      flex-direction: column; /* Arrange les liens en colonne à l'intérieur */
-      /* background-color: #0056b3; */ /* Optionnel: couleur de fond pour le menu déplié */
-  }
-  
-  /* Lorsque la classe 'open' est présente, afficher le conteneur des liens */
-  .navbar-links-container.open {
-      display: flex; /* Affiche le conteneur des liens quand le menu est ouvert */
-  }
-  
-  /* La liste des liens elle-même (UL) - Devient une colonne en mobile */
-  .custom-navbar-nav {
-      display: flex;
-      flex-direction: column; /* Les liens sont empilés verticalement sur mobile */
-      width: 100%; /* Prend toute la largeur du conteneur parent */
-      padding: 10px 0; /* Optionnel: padding intérieur */
-  }
-  
-  /* Chaque élément de liste (LI) - Ajoute une marge en bas pour espacer verticalement */
-  .custom-nav-item {
-      margin: 5px 0; /* Marge verticale entre les liens sur mobile */
-      text-align: center; /* Centre le texte des liens sur mobile */
-  }
-  
-  /* Les liens eux-mêmes (A ou button) - Ajoute un padding horizontal */
-  .custom-nav-link, .custom-logout-button {
-      padding: 10px 20px; /* Exemple de padding pour les zones de clic sur mobile */
-  }
-  
-  
-  /* --- Styles Responsive pour les écrans Larges --- */
-  
-  /* Utilise une media query pour appliquer ces styles uniquement sur les écrans de 992px de large ou plus (taille 'lg' de Bootstrap) */
-  @media (min-width: 992px) {
-    /* Masque le bouton hamburger sur les grands écrans */
-    .navbar-toggler {
-      display: none; /* Cache le bouton hamburger */
-    }
-  
-    /* Affiche le conteneur des liens normalement sur les grands écrans */
-    .navbar-links-container {
-        display: flex !important; /* Force l'affichage en flex, annulant le display: none/flex du basculement JS sur mobile */
-        flex-direction: row; /* Arrange les liens horizontalement */
-        align-items: center; /* Centre les liens verticalement dans la navbar */
-        width: auto; /* Ne prend pas toute la largeur */
-        margin-left: auto; /* Pousse les liens vers la droite (après le brand) */
-    }
-  
-    /* La liste des liens elle-même (UL) - Devient une rangée sur desktop */
-    .custom-navbar-nav {
-      flex-direction: row; /* Les liens sont côte à côte sur desktop */
-      width: auto; /* Ne prend pas toute la largeur */
-    }
-  
-    /* Chaque élément de liste (LI) - Ajoute une marge à gauche pour espacer horizontalement */
-    .custom-nav-item {
-      margin: 0 10px; /* Marge horizontale entre les liens sur desktop */
-      text-align: left; /* Alignement à gauche par défaut */
-    }
-  
-      /* Les liens eux-mêmes (A ou button) - Retire le padding vertical supplémentaire */
-      .custom-nav-link, .custom-logout-button {
-          padding: 5px 0; /* Revenir au padding d'origine */
-      }
-  
-      /* Ajustement spécifique pour le bouton déconnexion si besoin */
-      .custom-logout-button {
-         margin-left: 10px; /* Assure un espacement correct */
-      }
-  
-      /* Optionnel: Ajustement pour le nom de l'utilisateur */
-       .custom-nav-item span.custom-nav-link {
-          margin-left: 0; /* Retire la marge si elle était appliquée par erreur */
-       }
-  
-  }
-  
+
+}

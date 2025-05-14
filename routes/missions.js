@@ -30,7 +30,7 @@ router.post('/createMission', authMiddleware, async(req, res)=>{
 //------------------------recuperer toutes les missions-------------------------------//
 router.get('/showMissions', async(req, res)=>{
     try{
-        const result = await db.query('SELECT* FROM missions');
+        const result = await db.query('SELECT* FROM missions ORDER BY missions.created_at DESC');
         res.json(result.rows);
     }catch(err){
         res.status(500).json({error: err.message});

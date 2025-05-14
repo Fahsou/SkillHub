@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getToken } from "../utils/Token"; // Utilitaire pour récupérer le token
+import {Link} from "react-router-dom";
 
 export default function Profile() {
   const [user, setUser] = useState([]);
@@ -42,12 +43,28 @@ export default function Profile() {
   if (error) return <p className="text-red-600" >{error}</p>;
 
   return (
-    <div className="max-w-md mx-auto mt-6 p-4 border rounded shadow bg-white">
+    <div className="profil-container">
       <h2 className="text-2xl font-bold mb-4">Mon Profil</h2>
       <p><strong>Nom :</strong> {user.name}</p>
       <p><strong>Email :</strong> {user.email}</p>
       <p><strong>Role :</strong> {user.role}</p>
-      {/* Ajoute d'autres champs selon la structure de ton backend */}
+      
+      <button>
+      <Link to="/dashboard"> Voir mon tableau de bord </Link>
+      </button>
+     {user.role ==='freelance'? (
+      <>
+       <button>
+        <Link to="/showMissions" > Postuler a une mission </Link>
+       </button>
+      </>
+     ):(
+        <button>
+          <Link to="/createMission" > Creer une mission </Link>
+        </button>
+
+     ) }
+
     </div>
   );
 }
