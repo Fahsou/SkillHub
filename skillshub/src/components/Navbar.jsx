@@ -66,7 +66,7 @@ export default function Navbar({ user, onLogout }) {
               {/* Bouton Déconnexion ajout handlelogout plus tard */}
               <li className="custom-nav-item">
                 <button
-                  onClick={() => { handleLinkClick(); }} 
+                  onClick={() => {onLogout(); handleLinkClick(); }} 
                   className="custom-logout-button"
                 >
                   Déconnexion

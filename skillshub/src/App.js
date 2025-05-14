@@ -1,6 +1,7 @@
 //import logo from './logo.svg';
-import React from 'react';
-import {BrowserRouter, Routes, Route, useLocation} from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {BrowserRouter, Routes, Route, useLocation, Navigate} from 'react-router-dom';
+import axios from 'axios';
 import './App.css';
 import Navbar from './components/Navbar';
 import Register from './pages/Register';
@@ -23,22 +24,23 @@ import Homepage from './components/Homepage';
 
 
 
-
-
-
-
-
 function App() {
+ 
+ 
+
+
+
   return (
     <BrowserRouter>
      
-     <Navbar />
+     <Navbar  />
     <Routes>
      <Route path="/test" element={<div> Page de test  </div>} > </Route>
      <Route path="/" element={<Homepage/>} > </Route>
      <Route path="/register" element={<Register/>} > </Route>
-     <Route path="/login" element={<Login/>} > </Route>
-     <Route path="/profile" element={<Profile/>} > </Route>
+     <Route path="/login" element={ <Login/>} > </Route>
+
+     <Route path="/profile" element={ <Profile/> } > </Route>
      <Route path="/showMissions" element={<ShowMissions/>}></Route>
      <Route path="/createMission" element={<CreateMissions/>}></Route>
      <Route path="/freelancers" element={<Freelancers/>} ></Route>

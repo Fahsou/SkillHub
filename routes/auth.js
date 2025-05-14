@@ -3,6 +3,10 @@ const router = express.Router();
 const db = require('../db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+//const User = require('../models/Users'); // <<< Assurez-vous que le chemin est correct
+const jwtSecret = process.env.JWT_SECRET || '@secret_super';
+
+
 require('dotenv').config();
 
 //inscription utilisateur
@@ -61,7 +65,7 @@ router.post('/login', async(req, res)=>{
       email: user.email ,
       role: user.role
     }, 
-    process.env.JWT_SECRET,
+    jwtSecret,
     {expiresIn: '1h'}
    );
 
@@ -83,5 +87,69 @@ router.post('/login', async(req, res)=>{
   }
 
 });
+
+// --- LA ROUTE GET /api/auth/me (utilise db.query) ------------//
+router.get('/me', async(req,res)=>{
+  console.log('requete recu sur /api/auth/me'); 
+
+  const authHeader = req.header('Authorization');
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    console.log('>>> /api/auth/me: Aucun token dans l\'en-tete.'); // Log si pas de token
+    return res.status(401).json({ message: 'Aucun token, autorisation refusee.' });
+}
+
+ try{
+  // 1. Verifier le token
+  const decoded = jwt.verify(token, jwtSecret);
+
+  console.log('>>> /api/auth/me: Token decode:', decoded); // Log du payload
+  const userId = decoded.id;
+
+  if (!userId) {
+    console.error(">>> /api/auth/me: Payload JWT ne contient pas l'ID utilisateur attendu.", decoded);
+    return res.status(401).json({ message: 'Token invalide : ID utilisateur manquant dans le payload.' });
+}
+
+console.log(`>>> /api/auth/me: Recherche utilisateur avec l'ID : ${userId} en base de donnees.`);
+ const result = await db.query('SELECT id_users, name, email, role FROM users WHERE id_users = 1',
+  [userId]
+ );
+
+ const user = result.rows[0];
+
+ if (!user) {
+  console.warn(`>>> /api/auth/me: Utilisateur avec l'ID ${userId} trouve dans le token, 
+    mais non trouve en base de donnees.`);
+ return res.status(404).json({ message: 'Utilisateur non trouve.' });
+ }
+
+// 5. Renvoyer les informations de l'utilisateur au frontend
+console.log('>>> /api/auth/me: Verification reussie. Envoi des donnees utilisateur au frontend.');
+ res.json({ user: user }); 
+
+
+
+
+} catch(err){
+  console.error('>>> /api/auth/me: ERREUR lors de la verification du token ou de la recherche en BD:', err.message);
+  if (err.name === 'TokenExpiredError') {
+    return res.status(401).json({ message: 'Token expire.' });
+}
+  res.status(401).json({ message: 'Token non valide.' });
+
+ }
+
+
+});
+
+
+
+
+
+
+
+
 
 module.exports = router;
