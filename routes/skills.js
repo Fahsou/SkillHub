@@ -22,9 +22,9 @@ router.post('/', async(req, res)=>{
     }
 });
 
-//-------------Route pour obtenir les competences
+//-------------Route pour obtenir les competences-----------------------//
 
-router.get('/skills', async(req,res)=>{
+router.get('/', async(req,res)=>{
     console.log('Requete recue sur GET /api/skills');
 
   try{
