@@ -61,7 +61,7 @@ export default function Profile() {
         //Recupere toutes les competences dispo
         console.log(">>> Profile.jsx useEffect (Skills): Appel API GET /api/skills...");
 
-        const allSkillsRes = await axios.get('http://localhost:5000/api/skills');
+        const allSkillsRes = await axios.get('http://localhost:5000/api/skills/getskills');
 
         if(allSkillsRes.data){
         setAllSkills(allSkillsRes.data);
@@ -117,7 +117,7 @@ export default function Profile() {
     }
      fetchSkillsData();
 
-  }, [user, token]);
+  }, []);
 
   if(!user){
     return <div className="profile-container" > Chargement du profil ou utilisateur non connecté </div>

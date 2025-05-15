@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import axios from 'axios';
 
 export default function SearchResult(){
@@ -93,11 +93,13 @@ export default function SearchResult(){
                     {missionsResults.map( mission =>{
                         return(
                             <li key={mission.id || mission.id_missions}  >
-                                {mission.title || 'Mission sans titre'}
+                                {mission.title || 'Mission sans titre'} {' '}
+                            <Link to={`/missions/${mission.id_missions}`}>Voir la mission </Link>
                             </li>
+                        
                         );
                     } )}
-
+                   
                 </ul>
             ): (
                 <p> Aucune mission trouvee pour "{keyword}" </p>
@@ -112,6 +114,7 @@ export default function SearchResult(){
                             <li key={freelancer.id || freelancer.id_users } >
                                 {freelancer.role || 'Freelancer sans nom'} - Role : {freelancer.role}
                             </li>
+                            
                         )
                     } )}
                 </ul>

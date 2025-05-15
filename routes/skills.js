@@ -24,7 +24,7 @@ router.post('/', async(req, res)=>{
 
 //-------------Route pour obtenir les competences-----------------------//
 
-router.get('/', async(req,res)=>{
+router.get('/getskills', async(req,res)=>{
     console.log('Requete recue sur GET /api/skills');
 
   try{

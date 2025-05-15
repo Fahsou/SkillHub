@@ -128,4 +128,67 @@ router.get('/profile/skills', authMiddleware, async(req,res)=>{
 
 });
 
+//--- ----ROUTE POUR AJOUTER UNE COMPÉTENCE AU PROFIL DE L'UTILISATEUR CONNECTÉ ------//
+router.post('/profile/skills', authMiddleware, async(req,res)=>{
+    console.log('Requete recue sur POST /api/profile/skills');
+
+    const userId = req.user? req.user.id : req.user.Id;
+    const {skillId} = req.body; //recupere depuis la requete
+
+    if(!userId || skillId === undefined ){ //verification de la presence
+        console.warn(' >>> POST /api/profile/skills: userId ou skillId manquant dans la requete');
+        res.status().json({message: 'ID utilisateur ou ID competence manquant dans le corps de la requete.'});
+
+    }
+
+    if(typeof skillId !=='number' || !Number.isInteger(skillId) ){
+        console.warn('>>> POST /api/profile/skills: skillId n\'est pas un entier valide');
+        return res.status(400).json({message: 'Format de l\'ID competence invalide'});
+
+    }
+
+    try{
+        // 1. Verifier si la competence (skillId) existe reellement dans la table 'skills'
+        const skillExists = await db.query('SELECT 1 FROM users_skills WHERE user_id = $1 AND skill_id = $2',
+            [skillId]
+        );
+
+        if(skillExists.rows.length ===0){
+            console.warn('>>> POST /api/profile/skills: Competence avec ID ${skillId} non trouvee dans la table skills.');
+            return res.status(404).json({message: 'Competence specifique non trouvee'});
+        }
+
+        // 2.verifier si l'utilisateur n'a pas deja cette competences
+        const existingSkill = await db.query('SELECT 1 FROM users_skills WHERE user_id = $1 AND skill_id = $2',
+            [userId, skillId]
+        );
+        
+        if(existingSkill.rows.length >0 ){
+            console.log(`>>> POST /api/profile/skills: Utilisateur ${userId} a deja la 
+                competence ${skillId}` );
+        return res.status(409).json({message: 'L\'utilisateur possede deja cette competence'});
+        }
+
+        //MAINTENANT SI TOUT EST OK INSERTION DANS LA BDD
+        // Insere une nouvelle ligne liant l'utilisateur et la competence
+        const result = await db.query(`
+            INSERT INTO users_skills (user_id, skill_id) VALUES ($1, $2) RETURNING *`,
+            [userId, skillId]);
+        
+        console.log(`>>> POST /api/profile/skills: Competence ${skillId} ajoutee de l'utilisateur
+            ${userId} `);
+        res.status(201).json({message: 'Competence ajoutee avec succes ', 
+            userSkill: result.rows[0] });
+
+
+    }catch(err){
+        console.error('>>>POST /api/profile/skills: Erreur lors de l\'ajout de la competence:', err);
+        res.status(500).json({error: 'Erreur serveur lors de l\'ajout de la competence.'});
+    }
+
+} );
+
+
+
+
 module.exports = router;
