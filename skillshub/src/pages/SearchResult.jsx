@@ -10,7 +10,9 @@ export default function SearchResult(){
     const keyword = queryParams.get('keyword') || '';
 
     //etat pour stocker les resultats de recherche
-    const [results, setResults] = useState([]);
+    const [missionsResults, setMissionsResults] = useState([]);
+    const [freelancersResults, setFreelancersResults] = useState([]);
+
     const [loading, setLoading ] = useState(false);
     const [error, setError] = useState('');
 
@@ -18,7 +20,8 @@ export default function SearchResult(){
 
     useEffect(()=>{
         if(!keyword){
-            setResults([]);
+            setMissionsResults([]);
+            setFreelancersResults([]);
             setLoading(false);
             setError('');
             console.log(">>> SearchResults.jsx useEffect: Aucun mot-cle fourni, pas de recherche API.");
@@ -28,26 +31,41 @@ export default function SearchResult(){
     const fetchSearchResults = async () =>{
         setLoading(true);
         setError('');
+        setMissionsResults([]); //Vide les resultats precedents avant de lancer la nouvelle recherche
+        setFreelancersResults([]);
 
         try{
-            console.log(`>>> SearchResults.jsx useEffect: Recherche API pour "${keyword}"`);
+            console.log(`>>> SearchResults.jsx useEffect: Recherche API pour "${keyword}" missions et freelancers`);
 
             const [missionsRes, freelancersRes  ] = await Promise.all([
                 axios.get(`http://localhost:5000/api/search/missions?keyword=${encodeURIComponent(keyword)}`),
                 axios.get(`http://localhost:5000/api/search/freelancers?keyword=${encodeURIComponent(keyword)}`)
              ]);
        
-             setResults({
-                missions: missionsRes.data,
-                freelancers: freelancersRes.data
-             });
+           
+             console.log(">>> SearchResults.jsx useEffect: Reponses API recues.");
+             console.log(">>> Missions Response:", missionsRes.data);
+             console.log(">>> Freelancers Response:", freelancersRes.data);
 
-             console.log(">>> SearchResults.jsx useEffect: Reponse API de recherche recue:", {missions, freelancers});
+             if(missionsRes.data){
+                setMissionsResults(missionsRes.data);
+             }else{
+                setMissionsResults([]);
+                console.warn('>> SearchResults.jsx useEffect: Reponse API Missions - Donnees manquantes');
+             }
+             
+             if(freelancersRes.data){
+                setFreelancersResults(freelancersRes.data);
+             }else{
+                setFreelancersResults([]);
+                console.warn('>>> SearchResults.jsx useEffect: Reponse API Freelancers - Donnees manquantes.');
+             }
 
      } catch (err) {
         console.error(">>> SearchResults.jsx useEffect: ERREUR lors de la recherche API:", err);
         setError('Erreur lors de la recherche. Veuillez reessayer.'); // Message d'erreur utilisateur
-        setResults([]); 
+        setMissionsResults([]); 
+        setFreelancersResults([]);
      }finally{
         setLoading(false);
      }
@@ -58,7 +76,7 @@ export default function SearchResult(){
  }, [keyword] );
  
  return(
-  <div className="">
+  <div className="search-results-container">
     <h2 > Resultat de recherche {keyword && `pour ${keyword}` } </h2>
 
     {loading && <p> Chargement... </p>}
@@ -66,18 +84,48 @@ export default function SearchResult(){
 
     {!loading && !error && (
         <div> 
-            {results.length >0 ? (
+            
+          {/* Section Resultats Missions */}
+
+          <h3> Missions: ({missionsResults.length}) </h3>
+            {missionsResults.length >0 ? (
                 <ul>
-                    {results.map( item =>{
+                    {missionsResults.map( mission =>{
                         return(
-                            <li key={item.id || item.id_users}  ></li>
+                            <li key={mission.id || mission.id_missions}  >
+                                {mission.title || 'Mission sans titre'}
+                            </li>
                         );
                     } )}
 
                 </ul>
-            ): () }
+            ): (
+                <p> Aucune mission trouvee pour "{keyword}" </p>
+            ) }
+            <hr/>
+            {/* Section Resultats Freelancers */}
+            <h3> Candidats: ({freelancersResults.length}) </h3>
+            {freelancersResults.length>0 ? (
+                <ul>
+                    {freelancersResults.map(freelancer =>{
+                        return(
+                            <li key={freelancer.id || freelancer.id_users } >
+                                {freelancer.role || 'Freelancer sans nom'} - Role : {freelancer.role}
+                            </li>
+                        )
+                    } )}
+                </ul>
+            ): (
+                <p> Aucun freelancer trouve pour "{keyword}" </p>
+            ) }
+
         </div>
 
+    )}
+
+    {!loading && !error && missionsResults.length === 0 && freelancersResults.length === 0
+    && keyword && (
+        <p> Aucun resultat (missions ou freelancers) trouve pour "{keyword}". </p>
     )}
 
   </div>

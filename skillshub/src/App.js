@@ -15,6 +15,7 @@ import MissionDetails from './pages/MissionDetail';
 import ApplyForMissions from './pages/ApplyForMission';
 import Dashboard from './pages/Dashboard';
 import Homepage from './components/Homepage';
+import SearchResult from './pages/SearchResult';
 
 
 /*function LocationDisplay(){
@@ -36,6 +37,7 @@ function App() {
      <Navbar  />
     <Routes>
      <Route path="/test" element={<div> Page de test  </div>} > </Route>
+     <Route path="/search" element={<SearchResult />}  ></Route>
      <Route path="/" element={<Homepage/>} > </Route>
      <Route path="/register" element={<Register/>} > </Route>
      <Route path="/login" element={ <Login/>} > </Route>

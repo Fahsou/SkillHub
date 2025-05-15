@@ -19,6 +19,18 @@ export default function Navbar(){
     setIsMenuOpen(false);
   };
 
+  //Pour la navigation de recherche
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (e) =>{
+    e.preventDefault();
+
+    if(searchTerm.trim()){
+      navigate(`/search?keyword=${encodeURIComponent(searchTerm.trim())}`); 
+      setSearchTerm('');
+    }
+  }
+
   return (
     
       <nav className="navbar" >
@@ -40,6 +52,12 @@ export default function Navbar(){
 
          <ul className={`navbar-links ${isMenuOpen ? 'open' : ''}`}>
           <li> <Link to="/" onClick={toggleMenu} > Acceuil </Link> </li>
+          <form onSubmit={handleSearch} >
+            <input type="text"  placeholder="Rechercher"  value={searchTerm}
+            onChange={ (e)=>setSearchTerm(e.target.value) } />
+            <button type="submit" > Rechercher </button>
+          </form>
+
         
 
           {isAuthentified()? (// Liens affichés si l'utilisateur est connecté

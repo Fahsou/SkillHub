@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = '../db';
+const db = require('../db');
 
 // ----------------- ROUTE DE RECHERCHE DE MISSIONS (GET /api/search/missions) ----------------//
 //Base sur les mots cles

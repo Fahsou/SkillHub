@@ -94,5 +94,38 @@ router.delete('/:id', async(req,res) =>{
     }
 });
 
+//----------------ROUTE POUR OBTENIR LES COMPETENCES D'UN UTILISATEUR CONNECTE-------------------//
+router.get('/profile/skills', authMiddleware, async(req,res)=>{
+    console.log('Requete recue sur GET /api/profile/skills');
+
+    const userId = req.user? req.user.id : req.user.Id;
+
+  if(!userId){
+    console.warn('>>> /api/profile/skills: ID utilisateur non disponible apres authentification.');
+    return res.status(401).json({error: 'Utilisateur non authentifie'});
+  }
+
+  try{
+    const searchQuery = `
+    SELECT s.id_skills, s.name
+    FROM users_skills AS us
+    JOIN skills AS s ON us.skill_id = s.id_skills
+    WHERE us.user_id = $1
+    ORDER BY s.name ASC;`;
+
+    console.log(`>>> /api/profile/skills: Recherche des competences pour l'utilisateur ID : ${userId}`);
+
+    const result = await db.query(searchQuery, [userId]);
+    console.log(`>>> /api/profile/skills: Trouve ${result.rows.length} competence pour l'utilisateur 
+        ${userId} `);
+    res.json({skills: result.rows}); //renvoi un json avec une cle skills
+
+  }catch(err){
+    console.error('>>> /api/profile/skills: Erreur lors de la recuperation des competences de l\'utilisateur:',err);
+    res.status(500).json({error: 'Erreur serveur lors de la recupération des compétences'});
+
+  }
+
+});
 
 module.exports = router;
