@@ -12,9 +12,15 @@ export default function Profile() {
 
   //Etats pour competences
   const [userSkills, setUserSkills] = useState([]);
-  const [allSkills, setAllSkills] = useState([]);
   const [loadingSkills, setLoadingSkills] = useState(true);
   const [errorSkill, setErrorSkills] = useState('');
+
+  //Etat pour ajouter competences
+  const[newSkillName, setNewSkillName] = useState('');
+  const[addingSkill, setAddingSkill] = useState(false);
+  const[addSkillError, setAddSkillError] = useState('');
+
+  //------UseEffect pour charger le profil --------------//
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -48,76 +54,138 @@ export default function Profile() {
   }, []);
 
   useEffect(()=>{
-    const fetchSkillsData = async()=>{
+    const fetchUserSkills = async()=>{
       if(!user){
         setLoadingSkills(false);
+        setUserSkills([]);
         return;
       }
+      if(user.role === 'freelance' && token){
+        setLoadingSkills(true);
+        setErrorSkills('');
+        setUserSkills([]);
       
-      setLoadingSkills(true);
-      setErrorSkills('');
 
       try{
         //Recupere toutes les competences dispo
-        console.log(">>> Profile.jsx useEffect (Skills): Appel API GET /api/skills...");
+        console.log(">>> Profile.jsx useEffect (Skills): Appel API GET /api/user/getskills...");
 
-        const allSkillsRes = await axios.get('http://localhost:5000/api/skills/getskills');
+        const userSkillsRes = await axios.get('http://localhost:5000/api/users/getskills', 
+          {
+            headers:{
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
 
-        if(allSkillsRes.data){
-        setAllSkills(allSkillsRes.data);
-        console.log('>>> Profile.jsx useEffect (Skills): Toutes les competences recues:', 
-          allSkillsRes.data.length);
+        console.log(">>> Profile.jsx useEffect (User Skills): Reponse /api/users/getskills recue:",
+           userSkillsRes.data);
+
+
+
+        if(userSkillsRes.data && Array.isArray(userSkillsRes.data.skills)){
+        setUserSkills(userSkillsRes.data.skills);
+        console.log('>>> Profile.jsx useEffect ( Users Skills): GET /api/users/getskills', 
+          userSkillsRes.data.skills.length);
         }else{
-          setAllSkills([]);
-          console.warn('>>> Profile.jsx useEffect (Skills): Reponse /api/skills - Donnees manquantes.');
+          setUserSkills([]);
+          console.warn(`>>> Profile.jsx useEffect (Users Skills): Reponse /api/users/getskills 
+            - Donnees manquantes. ou format inattendu`);
         }
 
-        //recupere toutes les competences d'un utilisateur conncete
-        if(token){
-          console.log('>>> Profile.jsx useEffect (Skills): Appel API GET /api/profile/skills (avec token)...');
-
-          const userSkillsRes = await axios.get('http://localhost:5000/api/users/profile/skills', 
-            {
-              headers: {
-                'Authorization': `Bearer ${token}` //envoi le token
-              }
-            });
-
-          console.log('>>> Profile.jsx useEffect (Skills): Reponse /api/profile/skills recue:',
-            userSkillsRes.data );
-
-            // Verifie si la reponse contient bien la cle 'skills' avec un tableau
-            if(userSkillsRes.data && Array.isArray(userSkillsRes.data.skills) ){
-              setUserSkills(userSkillsRes.data.skills); //mise a jour de l'etat 
-
-              console.log('>>> Profile.jsx useEffect (Skills): Competences utilisateur recues:',
-                userSkillsRes.data.skills.length );
-
-            }else{
-              setUserSkills([]);
-              console.warn(`>>> Profile.jsx useEffect (Skills): 
-                Reponse /api/profile/skills - Donnees manquantes ou format inattendu.`);
-             }
-
-        } else{//token indispo
-          console.log(`>>>Profile.jsx useEffect (Skills): Token non disponible, 
-            impossible de charger les competences de l'utilisateur.` );
-            setUserSkills([]);
-        }
-
-      }catch(err){
-          console.error('>>> Profile.jsx useEffect (Skills): ERREUR lors du chargement des competences:', err);
+   }catch(err){
+          console.error('>>> Profile.jsx useEffect (Users Skills): ERREUR lors du chargement des competences:', err);
           setErrorSkills('Erreur lors du chargement des competences.');
-          setAllSkills([]);
           setUserSkills([]);
       }finally{
         setLoadingSkills(false);
       }
+    
+   }else{
+    console.log(`>>> Profile.jsx useEffect (User Skills): Pas un freelancer ou token manquant.
+       Pas de chargement des competences utilisateur.`);
+        setLoadingSkills(false);
+        setUserSkills([]);
+
+   }
 
     }
-     fetchSkillsData();
+     fetchUserSkills();
 
   }, []);
+
+  //---------Fonction pour ajouter des competences----------//
+  const handleAddSkill = async(e) =>{
+    e.preventDefault();
+
+    const skillNameToAdd = newSkillName.trim();
+
+    setAddingSkill(true);
+    setAddSkillError('');
+
+    //---validation frontend
+    if(!skillNameToAdd){
+      console.warn(">>> Profile.jsx handleAddSkill: Nom de competence vide.");
+        setAddSkillError("Veuillez entrer un nom de competence.");
+        setAddingSkill(false);
+        return;
+
+    }
+
+    
+
+    // Verifier si l'utilisateur a deja cette competence 
+    const userAlreadyHasSkill = userSkills.some(skill => 
+      skill.skill_name.toLowerCase() === skillNameToAdd.toLowerCase() );
+    if(userAlreadyHasSkill){
+      console.warn(`>>> Profile.jsx handleAddSkill: Utilisateur a deja la competence ID 
+        ${skillNameToAdd}`);
+        setAddSkillError('Competence déjà ajoute');
+        setAddingSkill(false);
+        return;
+    }
+
+    // --- 2. Appeler la route backend POST pour ajouter la competence ---
+  try{
+    console.log(` >>> Profile.jsx handleAddSkill: Appel API POST /api/users/addskills
+       pour ajouter la competence ID ${skillNameToAdd}`);
+
+       const response = await axios.post('http://localhost:5000/api/users/addskills',
+        {skillName: skillNameToAdd}, //Corps de la requete: l'ID de la competence
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+       );
+
+       console.log('>>> Profile.jsx handleAddSkill: Reponse API POST /api/users/addskills recue:',
+        response.data
+       );
+
+       // --- 3. Mettre a jour l'etat frontend si l'ajout a reussi ---
+      const addedSkillObject = {skill_name: skillNameToAdd};
+      setUserSkills([...userSkills, addedSkillObject]);
+      console.log(">>> Profile.jsx handleAddSkill: Etat userSkills mis a jour localement.");
+
+
+    
+  }catch(err){
+    console.error(`>>> Profile.jsx handleAddSkill: ERREUR lors de l'ajout de la competence:`,err);
+
+    if(err.response && err.response.data && err.response.data.message){
+      setAddSkillError(err.response.data.message);
+    } else{
+      setAddSkillError('Erreur reseau ou serveur lors de l\'ajout de la competence.');
+    }
+  
+  }finally{
+    setAddingSkill(false);
+  }
+
+
+
+  }
 
   if(!user){
     return <div className="profile-container" > Chargement du profil ou utilisateur non connecté </div>
@@ -168,13 +236,33 @@ export default function Profile() {
               <ul>
                 {userSkills.map(skill =>{
                   return(
-                    <li key={skill.id_skills}> {skill.name} </li>
+                    <li key={skill.id_skills}> {skill.name}
+                    <button> Supprimer </button>
+                     </li>
                   )
                 } )}
               </ul>
             ): (
               <p> Aucune competence ajoute pour l'instant </p>
             ) }
+            {/* --- INTERFACE POUR AJOUTER UNE NOUVELLE COMPÉTENCE --- */}
+             <form onSubmit={handleAddSkill} >
+              <input
+              type="text"
+              placeholder="Ajouter une competence"
+              value={newSkillName}
+              onChange={(e)=> setNewSkillName(e.target.value) }
+              disabled = {loadingSkills|| addingSkill}
+              className="add-skill-input"              
+               />
+              <button  type="submit" 
+              disabled={!newSkillName.trim() || loadingSkills ||addingSkill }
+              className="add-skill-button"
+              > {addingSkill? 'Ajout...': 'Ajouter compétences'} </button>
+
+             </form>
+             {addingSkill && <p> Ajout de competences </p> }
+             {addSkillError && <p className="error-message"> Erreur d'ajout: {addSkillError} </p>}
               
 
                </>
