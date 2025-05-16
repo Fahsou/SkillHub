@@ -1,123 +1,99 @@
-/* Styles Généraux de la Navbar */
+/* Navbar container */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #3498db; /* <-- Changé au bleu */
-  padding: 10px 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: white; /* Optionnel : met la couleur par défaut du texte en blanc */
+  background-color: #7c3aed; /* Violet pastel */
+  padding: 1rem 2rem;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.navbar-brand {
-  font-size: 1.5em;
+/* Brand/logo */
+.navbar .navbar-brand {
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #ffffff; /* <-- Changé au blanc */
-  text-decoration: none;
+  color: white;
 }
 
-/* Styles pour les liens de navigation (pour Desktop) */
+/* Links container */
 .navbar-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
-  align-items: center;
+  gap: 1rem;
+  list-style: none;
 }
 
-.navbar-links li {
-  margin-left: 20px;
-}
-
-.navbar-links a {
+/* Navigation links */
+.navbar-links li a {
+  color: white;
   text-decoration: none;
-  color: #ffffff; /* <-- Changé au blanc pour être visible sur fond bleu */
-  padding: 5px 10px;
-  transition: color 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
 }
 
-.navbar-links a:hover {
-  color: #ecf0f1; /* Couleur légèrement plus claire au survol */
+.navbar-links li a:hover {
+  background-color: #a78bfa; /* Couleur plus claire au survol */
+  color: white;
 }
 
-/* Styles pour le bouton hamburger (caché sur Desktop) */
+/* Hamburger button (for mobile) */
 .hamburger-button {
   display: none;
   background: none;
   border: none;
-  cursor: pointer;
-  padding: 10px;
-  z-index: 1000;
+  color: white;
+  font-size: 2rem;
+}
+
+/* Form in navbar */
+.navbar form {
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  width: 30px;
-  height: 20px;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-
-/* Styles pour les barres de l'icône hamburger */
-.hamburger-icon {
-  display: block;
-  width: 100%;
-  height: 3px;
-  background-color: #ffffff; /* <-- Changé au blanc pour être visible */
-  border-radius: 3px;
-  transition: all 0.3s ease-in-out;
+.navbar input[type="text"] {
+  padding: 0.3rem 0.7rem;
+  border: none;
+  border-radius: 0.4rem;
 }
 
-/* MEDIA QUERY pour les écrans plus petits (mobiles) */
-@media (max-width: 768px) { /* Ajuste cette valeur si nécessaire */
+.navbar button[type="submit"] {
+  background-color: #a78bfa;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-  /* Affiche le bouton hamburger sur mobile */
+.navbar button[type="submit"]:hover {
+  background-color: #c4b5fd;
+}
+
+/* Responsive: show hamburger on small screens */
+@media (max-width: 768px) {
   .hamburger-button {
-    display: flex;
+    display: block;
   }
 
-  /* Styles pour les liens de navigation sur mobile */
   .navbar-links {
     display: none;
     flex-direction: column;
+    background-color: #7c3aed;
     position: absolute;
-    top: 60px; /* Ajuste en fonction de la hauteur de ta navbar */
-    left: 0;
-    width: 100%;
-    background-color: #3498db; /* <-- Tu peux choisir de garder le fond bleu ou mettre un autre fond pour le menu ouvert */
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    padding: 20px 0;
-    transition: all 0.3s ease-in-out;
-    z-index: 999;
-    overflow-y: auto;
+    top: 60px;
+    right: 20px;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
-  /* Styles lorsque le menu est ouvert (classe 'open' ajoutée par React) */
   .navbar-links.open {
     display: flex;
   }
-
-  .navbar-links li {
-    margin: 10px 0;
-    text-align: center;
-  }
-
-  .navbar-links a {
-    color: #ffffff; /* <-- S'assurer qu'ils sont blancs aussi dans le menu mobile */
-    font-size: 1.2em;
-  }
-
-
-  /* Styles Optionnels : Animation de l'icône hamburger */
-  /* N'a pas besoin de changer, les barres étant déjà blanches */
-  .hamburger-button.open .hamburger-icon:nth-child(1) {
-    transform: rotate(-45deg) translate(-6px, 6px);
-  }
-
-  .hamburger-button.open .hamburger-icon:nth-child(2) {
-    opacity: 0;
-  }
-
-  .hamburger-button.open .hamburger-icon:nth-child(3) {
-    transform: rotate(45deg) translate(-6px, -6px);
-  }
-
 }
