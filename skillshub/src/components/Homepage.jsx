@@ -11,7 +11,7 @@ export default function Homepage() {
 
       {/* Description courte de la plateforme */}
       <p>
-        Connectez les Jeunes Diplômés Freelancers avec les Clients pour des missions passionnantes.
+        Connectez les Jeunes Diplômés talentueux avec les Clients pour des missions passionnantes.
       </p>
 
       {/* Section pour les liens de navigation importants */}
@@ -35,7 +35,7 @@ export default function Homepage() {
 
       </div>
 
-       <div className="homepage-features"> {/* Ajoutez une classe CSS */}
+       <div className="homepage-features"> 
          <h2>Pourquoi SkillHub ?</h2>
          <p>Trouvez des talents ou des opportunités rapidement.</p>
        
