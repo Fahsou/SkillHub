@@ -34,7 +34,7 @@ export default function ApplyForMissions(){
         }
 
         try{
-        const reponse = await axios.get(`http://localhost:5000/api/missions/${missionId}`);
+        const reponse = await axios.get(`/api/missions/${missionId}`);
         
         setMissionDetails(reponse.data); // Stocke les détails de la mission dans l'état
 
@@ -94,7 +94,7 @@ export default function ApplyForMissions(){
         try{
              //---------------Appel API pour envoyer la candidature--------------//
             //----------Le backend sécurisé s'attend à recevoir mission_id et message_content en JSON---------//
-            const reponse = await axios.post('http://localhost:5000/api/applications/apply', applicationData,
+            const reponse = await axios.post('/api/applications/apply', applicationData,
                 {
                     headers:{
                         'Content-Type': 'application/json', //indique qu'on envoi du json

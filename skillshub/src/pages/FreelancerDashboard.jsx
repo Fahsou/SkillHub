@@ -29,12 +29,12 @@ export default function FreelancerDashboard({user, token} ){ //user et token en 
             //nombre de missions postule
             const [appliedCountResponse, missionAppliedResponse ] = await Promise.all([
            
-            axios.get('http://localhost:5000/api/applications/count/by-freelancer',
+            axios.get('/api/applications/count/by-freelancer',
                 {
                     headers:{'Authorization': `Bearer ${token}`}
                 }),
 
-            axios.get('http://localhost:5000/api/applications/by-freelancer',
+            axios.get('/api/applications/by-freelancer',
                 {
                         headers:{'Authorization': `Bearer ${token}`}
                 }),

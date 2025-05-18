@@ -49,9 +49,9 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
         try{
             // --- Promise.all pour les requêtes initiales ---
             const [publishedCountReponse, acceptedCountReponse, missionHasApplicationResponse] = await Promise.all([
-                 axios.get('http://localhost:5000/api/missions/count/published-by-client', { headers: { 'Authorization': `Bearer ${token}` } }),
-                 axios.get('http://localhost:5000/api/missions/count/accepted-by-client', { headers: { 'Authorization': `Bearer ${token}` } }),
-                 axios.get('http://localhost:5000/api/missions/count/mission-has-application', { headers: { 'Authorization': `Bearer ${token}` } }), // <-- Endpoint
+                 axios.get('/api/missions/count/published-by-client', { headers: { 'Authorization': `Bearer ${token}` } }),
+                 axios.get('/api/missions/count/accepted-by-client', { headers: { 'Authorization': `Bearer ${token}` } }),
+                 axios.get('/api/missions/count/mission-has-application', { headers: { 'Authorization': `Bearer ${token}` } }), // <-- Endpoint
             ]);
 
             // --- Mise à jour des états initiaux ---
@@ -105,7 +105,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
         try {
             // --- Appel API vers la route backend par ID de mission ---
           
-     const reponse = await axios.get(`http://localhost:5000/api/applications/by-mission/${missionIdToFetch}`, { // <-- Template literal correct
+     const reponse = await axios.get(`/api/applications/by-mission/${missionIdToFetch}`, { // <-- Template literal correct
                 headers: { 'Authorization': `Bearer ${currentToken}` }
             });
 
@@ -183,7 +183,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
     }
 
     try{
-        const reponse = await axios.put(`http://localhost:5000/api/applications/${applicationId}/status`,
+        const reponse = await axios.put(`/api/applications/${applicationId}/status`,
             {status: newStatus}, //envoi le nouveau statu dans le crsp de la requete
             {
                 headers: {'Authorization': `Bearer ${currentToken}` }

@@ -47,7 +47,7 @@ export default function CreateMissions(){
       };
 
       try{
-        const reponse = await axios.post('http://localhost:5000/api/missions/createMission', dataToSend,
+        const reponse = await axios.post('/api/missions/createMission', dataToSend,
             { //config requete incluant header
                 headers:{
                     'Content-Type': 'application/json', //dire au back que c'est du json

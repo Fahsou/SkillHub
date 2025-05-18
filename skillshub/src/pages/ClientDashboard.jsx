@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 
-export default function ClientDashboard({user, token} ){ // Reçoit user et token en tant que props
+export default function ClientDashboard({user, token} ){ 
 
     // --- États pour les métriques spécifiques au client (comptes) ---
     const[clientStat, setClientStat] = useState(null); // Pour les comptes (publiées, acceptées)
@@ -38,9 +38,9 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
 
         try{
             const [publishedCountReponse, acceptedCountReponse, missionHasApplicationResponse] = await Promise.all([
-                 axios.get('http://localhost:5000/api/missions/count/published-by-client', { headers: { 'Authorization': `Bearer ${token}` } }),
-                 axios.get('http://localhost:5000/api/missions/count/accepted-by-client', { headers: { 'Authorization': `Bearer ${token}` } }),
-                 axios.get('http://localhost:5000/api/missions/count/mission-has-application', { headers: { 'Authorization': `Bearer ${token}` } }),
+                 axios.get('/api/missions/count/published-by-client', { headers: { 'Authorization': `Bearer ${token}` } }),
+                 axios.get('/api/missions/count/accepted-by-client', { headers: { 'Authorization': `Bearer ${token}` } }),
+                 axios.get('/api/missions/count/mission-has-application', { headers: { 'Authorization': `Bearer ${token}` } }),
             ]);
 
             setClientStat({
@@ -84,7 +84,7 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
         setMissionAppsError(prev => ({ ...prev, [missionIdToFetch]: null }));
 
         try {
-            const response = await axios.get(`http://localhost:5000/api/applications/by-mission/${missionIdToFetch}`, {
+            const response = await axios.get(`/api/applications/by-mission/${missionIdToFetch}`, {
                 headers: { 'Authorization': `Bearer ${currentToken}` }
             });
 
@@ -138,7 +138,7 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
 
        
         setUpdateError(null); // <-- Utilisez setUpdateError
-r
+
        if(updatingApp){ // <-- Variable name used by user
            console.warn(`Another application (${updatingApp}) is already being updated.`);
 
@@ -162,7 +162,7 @@ r
 
         try {
             // --- Appel API : PUT pour mettre à jour le statut ---
-            const response = await axios.put(`http://localhost:5000/api/applications/${applicationId}/status`,
+            const response = await axios.put(`/api/applications/${applicationId}/status`,
                 // --- Utilise la variable newStatus reçue en argument ---
                 { status: newStatus }, // <-- Envoie le nouveau statut reçu
                 {

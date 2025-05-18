@@ -11,7 +11,7 @@ export default function Freelancers(){
 
     const fetchFreelancers = async ()=>{
         try{
-            const reponse = await axios.get('http://localhost:5000/api/users',{
+            const reponse = await axios.get('/api/users',{
                 params: {
                     role: 'freelance' //ajoute le parametre role?=freelance a l'URL
                 }

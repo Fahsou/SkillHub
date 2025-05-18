@@ -38,8 +38,8 @@ export default function SearchResult(){
             console.log(`>>> SearchResults.jsx useEffect: Recherche API pour "${keyword}" missions et freelancers`);
 
             const [missionsRes, freelancersRes  ] = await Promise.all([
-                axios.get(`http://localhost:5000/api/search/missions?keyword=${encodeURIComponent(keyword)}`),
-                axios.get(`http://localhost:5000/api/search/freelancers?keyword=${encodeURIComponent(keyword)}`)
+                axios.get(`/api/search/missions?keyword=${encodeURIComponent(keyword)}`),
+                axios.get(`/api/search/freelancers?keyword=${encodeURIComponent(keyword)}`)
              ]);
        
            
