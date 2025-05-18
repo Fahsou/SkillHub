@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './register.css';
 
 export default function Register(){
     const [formData, setFormData] = useState({ //stockage donnee
@@ -42,17 +43,20 @@ export default function Register(){
     };
 
     return(
-        <div className="register-form">
-            <h2>Inscritption</h2>
-            <form onSubmit={handleSubmit} > 
-             <input type="text" name="name" placeholder="Nom complet" value={formData.name} onChange={handleChange} required />
-             <input type="text" name="email" placeholder="email" value={formData.email} onChange={handleChange} required />
-             <input type="password" name="password" placeholder="Mot de passe" value={formData.password} onChange={handleChange} required />
-             <select name="role" value={formData.role} onChange={handleChange}  required>
+        <div className="register-form-container">
+            <h2 className='register-title'>Inscritption</h2>
+            <form className='register-form' onSubmit={handleSubmit} > 
+             <input type="text" name="name" placeholder="Nom complet" className='input-register'
+              value={formData.name} onChange={handleChange} required />
+             <input type="text" name="email" placeholder="email" className='input-register'
+              value={formData.email} onChange={handleChange} required />
+             <input type="password" name="password" placeholder="Mot de passe" className='input-register'
+             value={formData.password} onChange={handleChange} required />
+             <select name="role" value={formData.role} className='input-register' onChange={handleChange}  required>
                 <option value="client"> Client </option>
                 <option value="freelance"> Freelance </option>
              </select>
-             <button type="submit"> S'inscrire </button>
+             <button type="submit" className='button-register' > S'inscrire </button>
             </form>
 
             {success && <p style={{ color: 'green' }}>{success}</p>}

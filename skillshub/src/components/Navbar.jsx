@@ -34,7 +34,7 @@ export default function Navbar(){
   return (
     
       <nav className="navbar" >
-        <h2 className="navbar-brand" > Freshers </h2>
+        <h2 className="navbar-brand" > Skillhub </h2>
 
          {/* Bouton Hamburger - Visible uniquement sur mobile grâce au CSS */}
          <button className={`hamburger-button ${isMenuOpen ? 'open' : ''}`}
@@ -42,8 +42,7 @@ export default function Navbar(){
          aria-label="Toggle menu"
          >
           <span className="hamburger-icon">  &#9776;</span>
-          <span className="hamburger-icon"></span>
-          <span className="hamburger-icon"></span>
+  
 
           
          </button>

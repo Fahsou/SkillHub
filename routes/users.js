@@ -97,7 +97,7 @@ router.delete('/:id', async(req,res) =>{
 //----------------ROUTE POUR OBTENIR LES COMPETENCES D'UN UTILISATEUR CONNECTE-------------------//
 // Selectionne le nom de la competence (skill_name) depuis la table users_skills
 router.get('/getskills', authMiddleware, async(req,res)=>{
-    console.log('Requete recue sur GET /api/users/profile/skills');
+    console.log('Requete recue sur GET /api/users/getskills');
 
     const userId = req.user? req.user.id : req.user.Id;
 

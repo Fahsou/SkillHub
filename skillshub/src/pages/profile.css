@@ -1,0 +1,124 @@
+.profile-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #f9f0ff; /* fond violet très pâle */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(160, 104, 190, 0.15);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-title {
+  font-size: 2rem;
+  color: #7c3aed;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.profile-subtitle {
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #7c3aed;
+}
+
+.button-role {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.7rem 1.5rem;
+  background-color: #7c3aed;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-role a {
+  color: white;
+  text-decoration: none;
+}
+
+.button-role:hover {
+  background-color: #8e6dcf;
+}
+
+.skill-title {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  color: #7c3aed;
+}
+
+.skill-list {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.skill-lists {
+  display: inline-block;
+  background-color: #e5d4f7;
+  color: #6b3fa0;
+  padding: 0.5rem 1rem;
+  margin: 0.3rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.skill-nope {
+  color: #aa78c8;
+  font-style: italic;
+}
+
+.form-skill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.input-skill {
+  padding: 0.5rem;
+  border: 1px solid #bca8e0;
+  border-radius: 6px;
+  width: 250px;
+}
+
+.button-add,
+.button-cancel {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.button-add {
+  background-color: #7c3aed;
+  color: white;
+}
+
+.button-add:hover {
+  background-color: #af86e5;
+}
+
+.button-cancel {
+  background-color: #e0c5fc;
+  color: #5a4080;
+}
+
+.button-cancel:hover {
+  background-color: #d2aef9;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: 1rem;
+}
+

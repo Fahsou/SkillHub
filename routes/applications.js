@@ -268,7 +268,8 @@ router.get('/by-mission/:missionId', authMiddleware, async(req, res)=>{
      app.status AS application_status,
      app.applied_at AS application_date,
      u.id_users AS freelancer_id,
-     u.name AS  freelancer_name -- Nom du freelancer qui a postulé
+     u.name AS  freelancer_name, -- Nom du freelancer qui a postulé
+     u.email AS freelancer_email
     FROM applications AS app
     JOIN users AS u ON app.freelance_id = u.id_users -- Joindre avec users pour le nom du freelancer
     WHERE app.mission_id = $1 ---- Filtrer PAR L'ID de la mission passé dans l'URL
@@ -315,7 +316,7 @@ console.log(`Requête reçue sur PUT /api/applications/${req.params.applicationI
 
     try{
       // 3a. Trouver la mission_id associée à cette candidature
-      const applicationCheck = await db.query('SELECT mission_id FROM applications WHERE id_applications =$1',
+      const applicationCheck = await db.query('SELECT mission_id FROM applications WHERE id_applications = $1',
         [applicationId]
       );
       // Si la candidature n'existe pas

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// Si vous avez l'intention d'utiliser <Link> plus tard, importez-le
-// import { Link } from 'react-router-dom';
+
 
 export default function ClientDashboard({user, token} ){ // Reçoit user et token en tant que props
 
     // --- États pour les métriques spécifiques au client (comptes) ---
     const[clientStat, setClientStat] = useState(null); // Pour les comptes (publiées, acceptées)
-    // La première liste des missions QUI ONT des candidatures, avec leur compte total de candidatures
     const[missionWithCount, setMissionWithCount] = useState(null);
 
     // États pour gérer le chargement et les erreurs des métriques initiales (comptes + première liste)
@@ -16,21 +14,14 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
 
 
     // --- États pour gérer l'affichage et les données des candidatures PAR MISSION ---
-    // État pour savoir quelle mission est "dépliée"
     const [expandedMissions, setExpandedMissions] = useState({});
-    // État pour stocker les listes de candidatures chargées, indexées par l'ID de mission
     const [applicationsByMission, setApplicationsByMission] = useState({});
-    // États de chargement et d'erreur spécifiques aux appels de chaque liste de candidatures par mission
     const [loadingMissionApps, setLoadingMissionApps] = useState({});
     const [missionAppsError, setMissionAppsError] = useState({});
 
     // --- États pour gérer la MISE À JOUR du statut d'une candidature ---
-    // Stocke l'ID de la candidature en cours de mise à jour (pour désactiver les boutons)
-    // Respecte le nom de variable choisi par l'utilisateur
-    const [updatingApp, setUpdatingApp] = useState(null); // <-- Variable name used by user
-    // Stocke un message d'erreur si la dernière mise à jour a échoué
-    // --- CORRECTION : Assurer que le setter a le bon nom ---
-    const [updateError, setUpdateError] = useState(null); // <-- Ensure setter name is correct
+    const [updatingApp, setUpdatingApp] = useState({}); 
+    const [updateError, setUpdateError] = useState(null); 
 
 
    // --- useEffect pour récupérer les métriques initiales et la première liste ---
@@ -145,19 +136,16 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
         console.log(`Attempting to update status for application ${applicationId} to ${newStatus}`);
         console.log("Valeur reçue pour newStatus:", newStatus); // <-- Log pour vérifier la valeur reçue
 
-        // --- CORRECTION : Typo dans le nom du setter ---
+       
         setUpdateError(null); // <-- Utilisez setUpdateError
-
-        // Empêche de lancer plusieurs mises à jour en même temps pour la même candidature ou si une autre est en cours
-        // Utilise la variable d'état avec le nom choisi par l'utilisateur
+r
        if(updatingApp){ // <-- Variable name used by user
            console.warn(`Another application (${updatingApp}) is already being updated.`);
-           // Optionnel: Afficher un message à l'utilisateur "Une autre mise à jour est en cours"
-           return; // Sort de la fonction si une mise à jour est déjà en cours
+
+           return; 
        }
 
-        // Indique que cette candidature est en cours de mise à jour
-        // Utilise la variable d'état avec le nom choisi par l'utilisateur
+    
         setUpdatingApp(applicationId); // <-- Utilise le setter correspondant
 
         const currentToken = token; // Récupère le token
@@ -183,7 +171,7 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
             );
 
             console.log(`Status updated successfully for application ${applicationId}:`, response.data);
-            // response.data devrait contenir la candidature mise à jour (y compris le nouveau statut)
+            
 
             // --- Mise à jour de l'État Frontend : Refléter le nouveau statut localement ---
             setApplicationsByMission(prev => {
@@ -206,7 +194,7 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
         } catch (err) {
             console.error(`Erreur lors de la mise à jour du statut de la candidature ${applicationId}:`, err);
             const errorMessage = err.response?.data?.error || err.message || 'Erreur lors de la mise à jour du statut.';
-            // --- CORRECTION : Typo dans le nom du setter ---
+            
             setUpdateError(`Échec de la mise à jour du statut (ID: ${applicationId}): ${errorMessage}`); // <-- Utilisez setUpdateError
 
             // Gérer les erreurs 401/403 (si le token expire pendant l'opération)
@@ -218,8 +206,7 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
         } finally {
             // Termine l'état de mise à jour, même en cas d'erreur
             setUpdatingApp(null); // <-- Utilise le setter correspondant
-            // Optionnel : Masquer le message d'erreur après un délai
-            // setTimeout(() => setUpdateError(null), 5000);
+            
         }
     };
 
@@ -235,7 +222,6 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
     };
 
 
-    // --- Logique de Rendu ---
 
     // Affichage chargement initial / erreur initiale
     if(loading){ return <p> Chargement initial du tableau de bord client...</p> }
@@ -282,77 +268,56 @@ export default function ClientDashboard({user, token} ){ // Reçoit user et toke
                                          )}
                                      </p>
 
-                                     {/* --- Affichage conditionnel de la liste des candidatures POUR CETTE MISSION --- */}
-                                     {isExpanded && (
-                                         <div style={{ marginTop: '10px', borderTop: '1px dashed #eee', paddingTop: '10px' }}>
-                                             <h6>Candidatures pour cette mission :</h6>
+     {/* --- Affichage conditionnel de la liste des candidatures POUR CETTE MISSION --- */}
+                    {isExpanded && (
+                <div>
+                    {isLoadingApps && <p>Chargement des candidatures...</p>}
+                    {updateError && <p >{updateError}</p>}
+                    
+                 {appsForThisMission && appsForThisMission.length>0 ? (
+                    <ul>
+                        {appsForThisMission.map(app =>(
+                            <li key={app.id_applications} >
+                                <p>Nom: {' '} {app.freelancer_name} </p>
+                                <p> Email: {' '} {app.freelancer_email} </p>
+                                <p> Status: {' '} {app.application_status} </p>
+                            <p> Message : {app.message_content ? app.message_content.substring(0, 100) + 
+                                (app.message_content.length > 100 ? '...' : '') : 'Pas de message'} {' '}
+                                 (Postulé le : {new Date(app.application_date).toLocaleDateString()})
+                             </p>
 
-                                             {/* Gérer les états de chargement/erreur pour les candidatures de cette mission */}
-                                             {isLoadingApps ? (
-                                                 <p> Chargement des candidatures pour "{mission.title}"...</p>
-                                             ) : missionAppError ? (
-                                                 <p style={{ color: 'red' }}>{missionAppError}</p>
-                                             ) : Array.isArray(appsForThisMission) && appsForThisMission.length > 0 ? (
-                                                  // Si la liste des candidatures pour cette mission est chargée et non vide
-                                                 <ul>
-                                                     {/* Mapper sur les candidatures DE CETTE MISSION pour les afficher individuellement */}
-                                                     {appsForThisMission.map(app => (
-                                                         // Utilise la variable d'état avec le nom choisi par l'utilisateur dans les conditions
-                                                         <li key={app.id_applications} style={{ fontSize: '0.9em', marginBottom: '5px', padding: '5px', borderBottom: '1px dotted #ddd' }}>
-                                                             {/* Détails de la candidature */}
-                                                             <p>
-                                                                 Postulé par <strong> {app.freelancer_name} </strong> - Statut : **{app.application_status}** {/* Affiche le statut actuel */}
-                                                             </p>
-                                                             <p style={{ fontSize: '0.9em', color: '#555' }}>
-                                                                  Message : {app.message_content ? app.message_content.substring(0, 100) + (app.message_content.length > 100 ? '...' : '') : 'Pas de message'}
-                                                                  (Postulé le : {new Date(app.application_date).toLocaleDateString()})
-                                                             </p>
+                              {/* Boutons de mise à jour de statut */}
 
-                                                             {/* --- Boutons Accepter/Rejeter et indicateur de mise à jour --- */}
-                                                             <div style={{ marginTop: '5px' }}>
-                                                                 {/* Afficher les boutons seulement si le statut est "pending" ET qu'aucune candidature n'est en cours de mise à jour */}
-                                                                 {/* Utilise la variable d'état avec le nom choisi par l'utilisateur */}
-                                                                 {app.application_status === 'pending' && !updatingApp && ( // <-- Variable name used by user
-                                                                     <> {/* Fragment pour regrouper les boutons */}
-                                                                          <button onClick={() => handleAcceptClick(app.id_applications)}
-                                                                                  style={{ padding: '3px 8px', cursor: 'pointer', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '3px', marginRight: '5px' }}>
-                                                                              Accepter
-                                                                          </button>
-                                                                          <button onClick={() => handleRejectClick(app.id_applications)}
-                                                                                  style={{ padding: '3px 8px', cursor: 'pointer', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: '3px' }}>
-                                                                              Rejeter
-                                                                          </button>
-                                                                     </>
-                                                                 )}
+                                <div>
+                                 <button
+                                 onClick={() => handleAcceptClick(app.id_applications)}
+                                 disabled={updatingApp === app.id_applications}
+                                
+                                >
+                                 Accepter
+                              </button>
+                              <button
+                               onClick={() => handleRejectClick(app.id_applications)}
+                               disabled={updatingApp === app.id_applications}
+                              >
+                              Rejeter
+                             </button>
 
-                                                                 {/* Afficher un message si cette candidature spécifique est en cours de mise à jour */}
-                                                                 {/* Utilise la variable d'état avec le nom choisi par l'utilisateur */}
-                                                                 {updatingApp === app.id_applications && ( // <-- Variable name used by user
-                                                                      <span style={{ color: 'blue', marginLeft: '10px' }}>Mise à jour...</span>
-                                                                 )}
+                                        
+                                </div>
+                            </li>
+                        ) )}
+                    </ul>
+                 ): !isLoadingApps?(
+                    <p>Aucune candidature à afficher.</p>
 
-                                                                  {/* Afficher le statut final s'il n'est plus pending */}
-                                                                  {/* Utilise la variable d'état avec le nom choisi par l'utilisateur */}
-                                                                  {app.application_status !== 'pending' && updatingApp !==app.id_applications && ( // <-- Variable name used by user
-                                                                       <span style={{ fontWeight: 'bold', marginLeft: '10px', color: app.application_status === 'accepted' ? 'green' : 'red' }}>
-                                                                           {app.application_status === 'accepted' ? 'Acceptée' : 'Rejetée'}
-                                                                       </span>
-                                                                  )}
+                 ): null }   
 
-                                                             </div>
 
-                                                              {/* Liens optionnels vers mission/freelancer (noté pour plus tard) */}
-                                                             {/* Exemple: <Link to={`/missions/${app.mission_id}`}>Mission</Link> | <Link to={`/freelancers/${app.freelancer_id}`}>Freelancer</Link> */}
-                                                         </li>
-                                                     ))}
-                                                 </ul>
-                                             ) : Array.isArray(appsForThisMission) && appsForThisMission.length === 0 ? (
-                                                 <p> Aucune candidature trouvée pour cette mission.</p>
-                                             ) : (
-                                                 null
-                                             )}
-                                         </div>
-                                     )} {/* Fin de l'affichage conditionnel de la liste par mission */}
+                </div>
+                    )}
+                                     
+                                      {/* Fin de l'affichage conditionnel de la liste par mission */}
 
                                  </li>
                              );
