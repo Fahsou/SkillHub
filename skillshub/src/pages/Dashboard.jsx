@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 // --- Importez les composants spécifiques aux rôles ---//
-import testClient from './testClient';
+import ClientDashTest from './testClient1';
 import FreelancerDashboard from './FreelancerDashboard';
 import ClientDash from './testClient';
 

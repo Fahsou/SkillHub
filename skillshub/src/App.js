@@ -23,6 +23,8 @@ import SearchResult from './pages/SearchResult';
   return <div style={{color: 'red', fontWeight: 'bold'}}> Chemin actuel : {location.pathname} </div>;
 }*/
 
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
 
 
 function App() {

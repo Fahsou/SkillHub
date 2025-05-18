@@ -43,7 +43,8 @@ router.get('/:id', async(req,res)=>{
 
   const missionId = req.params.id; //recupere id mission depuis parametre URL
   try{
-    const result = await db.query('SELECT* FROM missions WHERE id_missions = $1', [missionId]);
+    const result = await db.query('SELECT* FROM missions WHERE id_missions = $1',
+       [missionId]);
 
     if(result.rows.length === 0 ){
       return res.status(404).json({error: 'Mission non trouvee'});

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import {getToken} from '../utils/Token';
 
 
 export default function ClientDash({user, token} ){ // Reçoit user et token en tant que props
@@ -79,7 +80,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
 
     fetchInitialClientData(); // Appelle la fonction de récupération initiale
 
-   }, [user, token]); // Dépendances (correctes)
+   }, [user, token]); 
 
 
     // --- Fonction pour récupérer les candidatures pour UNE mission spécifique (appelée par le bouton) ---
@@ -104,7 +105,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
         try {
             // --- Appel API vers la route backend par ID de mission ---
           
-            const reponse = await axios.get(`http://localhost:5000/api/applications/by-mission/${missionIdToFetch}`, { // <-- Template literal correct
+     const reponse = await axios.get(`http://localhost:5000/api/applications/by-mission/${missionIdToFetch}`, { // <-- Template literal correct
                 headers: { 'Authorization': `Bearer ${currentToken}` }
             });
 
@@ -265,14 +266,10 @@ if(clientStat){
                         {/* --- Mapper sur la première liste des missions avec candidatures --- */}
         {missionWithCount.map( mission => { // Pour chaque mission de cette liste...
          const missionId = mission.id_missions;
-                             
-        const isExpanded = !!expandedMissions[missionId]; // Est-ce que cette mission est dépliée ?
-                             
-        const appsForThisMission = applicationsByMission[missionId]; // Les candidatures chargées pour cette mission
-                           
-        const isLoadingApps = !! loadingMissionApps[missionId]; // Est-ce que les candidatures de cette mission chargent ?
-                            
-        const missionAppError = missionAppsError[missionId]; // Y a-t-il une erreur pour cette mission ?
+         const isExpanded = !!expandedMissions[missionId]; 
+        const appsForThisMission = applicationsByMission[missionId]; 
+        const isLoadingApps = !! loadingMissionApps[missionId]; 
+        const missionAppError = missionAppsError[missionId]; 
 
         return ( // Retourne l'élément LI pour cette mission
          <li key={missionId} style={{ marginBottom: '10px', border: '1px solid #ccc', padding: '10px' }}> {/* Styles de base */}
@@ -292,8 +289,8 @@ if(clientStat){
                                          )}
              </p>
 
-                                     {/* --- Affichage conditionnel de la liste des candidatures POUR CETTE MISSION --- */}
-                                     {/* Cette section s'affiche si cette mission spécifique est "dépliée" */}
+                        {/* --- Affichage conditionnel de la liste des candidatures POUR CETTE MISSION --- */}
+                         {/* Cette section s'affiche si cette mission spécifique est "dépliée" */}
             {isExpanded && (
              <div style={{ marginTop: '10px', borderTop: '1px dashed #eee', paddingTop: '10px' }}>
               <h6>Candidatures pour cette mission :</h6>
@@ -304,7 +301,7 @@ if(clientStat){
                     ) : missionAppError ? (
                     <p style={{ color: 'red' }}>{missionAppError}</p>
                      ) : Array.isArray(appsForThisMission) && appsForThisMission.length > 0 ? (
-                                                  // Si la liste des candidatures pour cette mission est chargée et non vide
+                            // Si la liste des candidatures pour cette mission est chargée et non vide
                     <ul>
                                                      {/* Mapper sur les candidatures DE CETTE MISSION */}
                     {appsForThisMission.map(app => ( // Utilise 'app'
@@ -312,7 +309,7 @@ if(clientStat){
                      Postulé par <strong> {app.freelancer_name} </strong> - Statut : {app.application_status} {' '}
                                                              {/* Afficher un extrait du message et la date */}
                      Message : {app.message_content ? app.message_content.substring(0, 50) +
-                     (app.message_content.length > 50 ? '...' : '') : 'Pas de message'}
+                     (app.message_content.length > 50 ? '...' : '') : 'Pas de message'} {' '}
                      Postulé le : {new Date(app.application_date).toLocaleDateString()}
 
                 <div style={{ marginTop: '5px' }}>  
