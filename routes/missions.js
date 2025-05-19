@@ -113,7 +113,8 @@ router.get('/count/mission-has-application', authMiddleware, async(req,res)=>{
          `;
 
          const result = await db.query(query, [clientId]);
-         res.json(result.rows);
+         
+         res.json({result});
 
 
   }catch(err){ 

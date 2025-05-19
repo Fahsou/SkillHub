@@ -127,7 +127,7 @@ export default function ClientDash({user, token} ){ // Reçoit user et token en 
             // Gérer les erreurs d'authentification (401/403)
             if (err.response && (err.response.status === 401 || err.response.status === 403)) {
                 localStorage.removeItem('token');
-                // navigate('/login'); // Si navigate dispo
+                // navigate('/login'); 
             }
 
         } finally {
@@ -257,7 +257,7 @@ if(clientStat){
             {clientStat?.acceptedCount !== undefined ? clientStat.acceptedCount  : 'N/A' }
         </p>
 
-                 {/* --- Section "Missions avec candidatures" (la première liste mappée, avec les NOUVEAUX boutons) --- */}
+    {/* --- Section "Missions avec candidatures" (la première liste mappée, avec les NOUVEAUX boutons) --- */}
         <h4> Missions avec candidatures : </h4> {/* Titre ajusté */}
 
                  {/* Vérifier si missionWithCount est un tableau ET s'il a des éléments */}
@@ -316,14 +316,16 @@ if(clientStat){
                      {app.application_status === 'pending' && !updatingApp && (
                      <>
                       <button onClick={()=>{ handleAcceptClick(app.id_applications)}} style={{ padding: '3px 8px', cursor: 'pointer',  backgroundColor: '#4CAF50', color: 'white',
-                          border: 'none', borderRadius: '3px', marginRight: '5px' }}  >
+                          border: 'none', borderRadius: '3px', marginRight: '5px' }} 
+                          >
                        Accepter
                      </button>
 
                      <button onClick={()=>{
                       handleRejectClick(app.id_applications)}
                      } style={{ padding: '3px 8px', cursor: 'pointer', backgroundColor: '#f44336', 
-                     color: 'white', border: 'none', borderRadius: '3px' }} >
+                     color: 'white', border: 'none', borderRadius: '3px' }}
+                       >
                     Rejeter
                     </button>
 
@@ -334,12 +336,16 @@ if(clientStat){
                   <span style={{ color: 'blue', marginLeft: '10px' }}>Mise à jour...</span>
 
                 ) }
+
                 {app.application_status!=='pending' && updatingApp !==app.id_applications &&(
-                    <span style={{ fontWeight: 'bold', marginLeft: '10px', 
-                        color: app.application_status === 'accepted' ? 'green' : 'red' }} >
-                    
-                   {app.application_status ==='accepted'? 'Accepté': 'Rejeté'}
+                   
                   
+                   
+                   <span style={{ fontWeight: 'bold', marginLeft: '10px', 
+                        color: app.application_status === 'rejected' ? 'red' : 'green' }} >
+                    
+                   {app.application_status ==='rejected'? 'Rejeté': 'Accepté'}
+                   
 
                         </span>
                 ) }
