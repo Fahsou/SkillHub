@@ -7,7 +7,7 @@ import Navbar from './components/Navbar';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
-import ShowMissions from './pages/ShowMissions';
+import ShowMissions from './pages/showMissions';
 import CreateMissions from './pages/createMissions';
 import Freelancers from './pages/Freelancers';
 import Clients from './pages/Clients';
