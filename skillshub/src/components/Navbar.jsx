@@ -34,7 +34,7 @@ export default function Navbar(){
   return (
     
       <nav className="navbar" >
-        <h2 className="navbar-brand" > Skillhub </h2>
+        <h2 className="navbar-brand" > Starter </h2>
 
          {/* Bouton Hamburger - Visible uniquement sur mobile grâce au CSS */}
          <button className={`hamburger-button ${isMenuOpen ? 'open' : ''}`}
