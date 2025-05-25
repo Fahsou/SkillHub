@@ -20,7 +20,7 @@ export default function Profile() {
     const fetchProfileAndSkills = async () => {
       try {
         // Charger les infos utilisateur
-        const resUser = await axios.get("/api/users/profile", {
+        const resUser = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/profile`, {  //api/users/profile
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -29,7 +29,7 @@ export default function Profile() {
 
         //  Charger les compétences si freelance
         if(userData.role === 'freelance'){
-        const resSkills = await axios.get("/api/users/getskills", {
+        const resSkills = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/getskills`, {  //api/users/getskills
           headers: { Authorization: `Bearer ${token}` },
         });
         const extractedSkills = resSkills.data.skills.map(s => s.skill_name);
@@ -52,13 +52,13 @@ export default function Profile() {
     setLoading(true);
     try {
        await axios.post(
-        "/api/users/addskills",
+        `${process.env.REACT_APP_API_URL}/api/users/addskills`,  //api/users/addskills
         { skillName: newSkill },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Recharger les compétences après ajout
-      const resSkills = await axios.get("/api/users/getskills", {
+      const resSkills = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/getskills`, {   //api/users/getskills
         headers: { Authorization: `Bearer ${token}` },
       });
       const updatedSkills = resSkills.data.skills.map(s => s.skill_name);
