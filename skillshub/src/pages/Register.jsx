@@ -29,7 +29,7 @@ export default function Register(){
         setError(null);
 
         try{
-            const res = await axios.post('/api/auth/register', formData);
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, formData); //api/auth/register
             console.log('Inscription resussi', res.data);
           setSuccessMessage('Inscription reussi');
             setTimeout(()=>{

@@ -15,7 +15,7 @@ export default function ShowMissions(){
     
         const fetchMissions = async () =>{
             try{
-                const reponse = await axios.get('/api/missions/showMissions');
+                const reponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/missions/showMissions`); //api/missions/showMissions
                 console.log('Reponse API', reponse); //reponse de axios
                 console.log('Liste des missions', reponse.data); //Liste mission
 
