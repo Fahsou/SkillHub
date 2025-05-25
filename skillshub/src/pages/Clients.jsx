@@ -11,7 +11,7 @@ export default function Clients(){
 
     const fetchClients = async ()=>{
         try{
-            const reponse = await axios.get('http://localhost:5000/api/users',{
+            const reponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`,{  //api/users
                 params: {
                     role: 'client' //ajoute le parametre role?=freelance a l'URL
                 }
