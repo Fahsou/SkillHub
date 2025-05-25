@@ -7,7 +7,6 @@ import Navbar from './components/Navbar';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
-import ShowMissions from './pages/showMissions';
 import CreateMissions from './pages/createMissions';
 import Freelancers from './pages/Freelancers';
 import Clients from './pages/Clients';
@@ -16,6 +15,7 @@ import ApplyForMissions from './pages/ApplyForMission';
 import Dashboard from './pages/Dashboard';
 import Homepage from './components/Homepage';
 import SearchResult from './pages/SearchResult';
+import ShowMissions from './pages/showMissions';
 
 
 /*function LocationDisplay(){
@@ -23,7 +23,7 @@ import SearchResult from './pages/SearchResult';
   return <div style={{color: 'red', fontWeight: 'bold'}}> Chemin actuel : {location.pathname} </div>;
 }*/
 
-axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+//axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 
 

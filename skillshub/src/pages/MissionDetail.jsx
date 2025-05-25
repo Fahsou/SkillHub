@@ -21,7 +21,7 @@ export default function MissionDetails(){
             setLoading(true);
 
             //utilisation de param de l'URL dans l'API get
-            const reponse = await axios.get(`/api/missions/${missionId}`);
+            const reponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/missions/${missionId}`);
             console.log(`Details de la mission ${missionId}`, reponse.data);
             
             setMission(reponse.data); //met a jour l'etat avec les details de la mission recu
