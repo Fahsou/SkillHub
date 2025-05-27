@@ -36,7 +36,7 @@ export default function Dashboard(){
     setToken(storedToken); // Si token trouve
 
     try{
-        const reponse = await axios.get('/api/users/profile', 
+        const reponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/profile`, 
             {
                 headers: {'Authorization': `Bearer ${storedToken}` } // Envoie le token dans l'en-tête d'autorisation
             }
